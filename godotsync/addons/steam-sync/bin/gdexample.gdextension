@@ -1,0 +1,14 @@
+[configuration]
+
+entry_symbol = "steamsync_library_init"
+compatibility_minimum = "4.3"
+reloadable = true
+
+[libraries]
+
+windows.debug.x86_64 = "win64/steamsync.windows.template_debug.x86_64.dll"
+
+
+[dependencies]
+windows.x86_64 = { "win64/steam_api64.dll": "" }
+windows.x86_32 = { "win32/steam_api.dll": "" }

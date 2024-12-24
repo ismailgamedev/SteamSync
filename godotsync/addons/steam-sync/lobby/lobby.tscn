@@ -1,0 +1,237 @@
+[gd_scene load_steps=4 format=3 uid="uid://c8hvptl6vtavm"]
+
+[ext_resource type="Script" path="res://addons/steam-sync/lobby/lobby.gd" id="1_2sxnm"]
+[ext_resource type="Texture2D" uid="uid://dbx66sovxd1" path="res://icon.svg" id="2_4qrot"]
+[ext_resource type="Script" path="res://addons/steam-sync/lobby/profile.gd" id="2_7emat"]
+
+[node name="Lobby" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_2sxnm")
+
+[node name="BG" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LobbyMain" type="Panel" parent="CenterContainer"]
+custom_minimum_size = Vector2(500, 350)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/LobbyMain"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/LobbyMain/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/LobbyMain/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 41
+text = "LOBBY MENU"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OpenJoinLobbyBtn" type="Button" parent="CenterContainer/LobbyMain/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+text = "Join Lobby"
+
+[node name="OpenLobbyCreateBtn" type="Button" parent="CenterContainer/LobbyMain/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+text = "Create Lobby
+"
+
+[node name="CreateLobbyMenu" type="Panel" parent="CenterContainer"]
+visible = false
+custom_minimum_size = Vector2(500, 350)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/CreateLobbyMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/CreateLobbyMenu/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="LobbyNameTxt" type="TextEdit" parent="CenterContainer/CreateLobbyMenu/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+placeholder_text = "Lobby Name"
+
+[node name="LobbyMaxPlayerList" type="OptionButton" parent="CenterContainer/CreateLobbyMenu/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+selected = 1
+item_count = 3
+popup/item_0/text = "2 Player"
+popup/item_1/text = "4 Player"
+popup/item_1/id = 1
+popup/item_2/text = "8 Player"
+popup/item_2/id = 2
+
+[node name="CreateLobbyBtn" type="Button" parent="CenterContainer/CreateLobbyMenu/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+text = "Create Lobby"
+
+[node name="JoinLobbyMenu" type="Panel" parent="CenterContainer"]
+visible = false
+custom_minimum_size = Vector2(500, 350)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/JoinLobbyMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/JoinLobbyMenu/MarginContainer"]
+layout_mode = 2
+
+[node name="SettingsPanel" type="PanelContainer" parent="CenterContainer/JoinLobbyMenu/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32.505)
+layout_mode = 2
+
+[node name="VBoxContainer1" type="HBoxContainer" parent="CenterContainer/JoinLobbyMenu/MarginContainer/VBoxContainer/SettingsPanel"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/JoinLobbyMenu/MarginContainer/VBoxContainer/SettingsPanel/VBoxContainer1"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="SettingsOptionBtn" type="OptionButton" parent="CenterContainer/JoinLobbyMenu/MarginContainer/VBoxContainer/SettingsPanel/VBoxContainer1/MarginContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+selected = 0
+item_count = 3
+popup/item_0/text = "WORLDWIDE"
+popup/item_1/text = "CLOSE"
+popup/item_1/id = 1
+popup/item_2/text = "FAR"
+popup/item_2/id = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="CenterContainer/JoinLobbyMenu/MarginContainer/VBoxContainer/SettingsPanel/VBoxContainer1"]
+layout_mode = 2
+size_flags_horizontal = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Button" type="Button" parent="CenterContainer/JoinLobbyMenu/MarginContainer/VBoxContainer/SettingsPanel/VBoxContainer1/MarginContainer2"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 10
+text = "refresh"
+
+[node name="LobbyListPanel" type="PanelContainer" parent="CenterContainer/JoinLobbyMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/JoinLobbyMenu/MarginContainer/VBoxContainer/LobbyListPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CenterContainer/JoinLobbyMenu/MarginContainer/VBoxContainer/LobbyListPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="LobbyListContainer" type="VBoxContainer" parent="CenterContainer/JoinLobbyMenu/MarginContainer/VBoxContainer/LobbyListPanel/MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 9
+
+[node name="BackBtn" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -155.0
+offset_top = 18.0
+offset_right = -18.0
+offset_bottom = 64.0
+grow_horizontal = 0
+text = "Back"
+
+[node name="ProfileCont" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -168.0
+offset_top = -68.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+script = ExtResource("2_7emat")
+
+[node name="SteamUserNameLbl" type="Label" parent="ProfileCont"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+text = "SteamName"
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="AvatarTexture" type="TextureRect" parent="ProfileCont"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+size_flags_horizontal = 10
+texture = ExtResource("2_4qrot")
+expand_mode = 2
+
+[connection signal="pressed" from="CenterContainer/LobbyMain/MarginContainer/VBoxContainer/OpenJoinLobbyBtn" to="." method="_on_open_join_lobby_btn_pressed"]
+[connection signal="pressed" from="CenterContainer/LobbyMain/MarginContainer/VBoxContainer/OpenLobbyCreateBtn" to="." method="_on_open_lobby_create_btn_pressed"]
+[connection signal="pressed" from="BackBtn" to="." method="_on_back_btn_pressed"]
