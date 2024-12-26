@@ -22,8 +22,19 @@ void ANetworkManager::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::INT, "LOBBY_ID"), "set_lobby_id", "get_lobby_id");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "STEAM_ID"), "set_steam_id", "get_steam_id");
     ADD_PROPERTY(PropertyInfo(Variant::STRING, "STEAM_USERNAME"), "set_steam_username", "get_steam_username");
-    ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "LOBBY_MEMBERS",PROPERTY_HINT_INT_IS_POINTER ), "set_lobby_members", "get_lobby_members");
+    ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "LOBBY_MEMBERS"), "set_lobby_members", "get_lobby_members");
     
+    BIND_ENUM_CONSTANT(START);
+    BIND_ENUM_CONSTANT(READY);
+    BIND_ENUM_CONSTANT(START_SCENE);
+    BIND_ENUM_CONSTANT(TRANFORM_SYNC);
+    BIND_ENUM_CONSTANT(PROPERTY);
+    BIND_ENUM_CONSTANT(EVENT);
+    BIND_ENUM_CONSTANT(RIGIDBODY_SYNC);
+    BIND_ENUM_CONSTANT(SCENE_LOADED);
+    BIND_ENUM_CONSTANT(COMMAND);
+    BIND_ENUM_CONSTANT(VOICE);
+    BIND_ENUM_CONSTANT(RAGDOLL);
 
 }
 
@@ -43,6 +54,9 @@ ANetworkManager::ANetworkManager() {
 ANetworkManager::~ANetworkManager() {
 }
 void ANetworkManager:: _ready() {
+    if (Engine::get_singleton()->is_editor_hint()) {
+        return;
+    }
 
     SteamPtr = Object::cast_to<Steam>(Engine::get_singleton()->get_singleton("Steam"));
     
@@ -73,6 +87,9 @@ void ANetworkManager:: _ready() {
 }
 
 void ANetworkManager::_process(double delta) {
+    if (Engine::get_singleton()->is_editor_hint()) {
+        return;
+    }
     if (IS_ON_STEAM)
     {
         SteamPtr->_run_callbacks();
@@ -113,10 +130,10 @@ void ANetworkManager::set_lobby_id(uint64_t _lobby_id) {
     LOBBY_ID = _lobby_id;
 }
 
-TypedArray<uint64_t> ANetworkManager::get_lobby_members() {
+TypedArray<Dictionary> ANetworkManager::get_lobby_members() {
     return LOBBY_MEMBERS;
 }
 
-void ANetworkManager::set_lobby_members(TypedArray<uint64_t> _lobby_members) {
+void ANetworkManager::set_lobby_members(TypedArray<Dictionary> _lobby_members) {
     LOBBY_MEMBERS = _lobby_members;
 }

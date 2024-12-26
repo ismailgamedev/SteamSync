@@ -1,14 +1,10 @@
-extends HBoxContainer
+extends Panel
 
-@onready var profile_image : TextureRect = $AvatarTexture
-@onready var profile_name : Label = $SteamUserNameLbl
+
 var AVATAR: Image
-# Is it ready? Do stuff!
-func _ready():
-	Steam.avatar_loaded.connect(_loaded_Avatar)
-	Steam.getPlayerAvatar(Steam.AVATAR_MEDIUM, NetworkManager.STEAM_ID)
 
-	profile_name.text = NetworkManager.STEAM_USERNAME
+	
+
 func _loaded_Avatar(id: int, this_size: int, buffer: PackedByteArray) -> void:
 	# Check we're only triggering a load for the right player, and check the data has actually changed
 	if id == NetworkManager.STEAM_ID and (not AVATAR or not buffer == AVATAR.get_data()):
@@ -17,4 +13,9 @@ func _loaded_Avatar(id: int, this_size: int, buffer: PackedByteArray) -> void:
 		# Apply it to the texture
 		var AVATAR_TEXTURE: ImageTexture = ImageTexture.create_from_image(AVATAR)
 		# Set it
-		profile_image.set_texture(AVATAR_TEXTURE)
+		$MarginContainer/HBoxContainer/MemberTexture.set_texture(AVATAR_TEXTURE)
+
+func set_member_panel(steam_id:int,steam_name:String) -> void:
+	Steam.avatar_loaded.connect(_loaded_Avatar)
+	Steam.getPlayerAvatar(Steam.AVATAR_MEDIUM, steam_id)
+	$MarginContainer/HBoxContainer/MemberLbl.text =str(steam_name)

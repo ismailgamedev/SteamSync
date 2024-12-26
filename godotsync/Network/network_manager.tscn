@@ -1,5 +1,3 @@
 [gd_scene format=3 uid="uid://bu2u4c4ldfj2l"]
 
 [node name="ANetworkManager" type="ANetworkManager"]
-STEAM_ID = 76561198405697387
-STEAM_USERNAME = "mecho"

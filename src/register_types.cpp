@@ -6,7 +6,7 @@
 #include "NetworkManager.h"
 #include "godot_cpp/classes/engine.hpp"
 #include "godotsteam.h"
-
+#include "command.h"
 #include <godot_cpp/classes/engine.hpp>
 #include "p2p.h"
 using namespace godot;
@@ -21,7 +21,9 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	}
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
 		GDREGISTER_CLASS(ANetworkManager);
+		GDREGISTER_CLASS(ACommand);
 		GDREGISTER_CLASS(AP2P);
+		
 	}
 	
 
@@ -35,6 +37,7 @@ void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {
 	}
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
+		
 	}
 
 
