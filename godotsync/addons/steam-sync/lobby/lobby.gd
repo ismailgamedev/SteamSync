@@ -18,7 +18,7 @@ enum MENU_VISIBILITY {LOBBY_MAIN,CREATE_LOBBY_MENU,JOIN_LOBBY_MENU,LOBBY_MENU}
 
 func _ready() -> void:
 	Steam.join_requested.connect(_on_lobby_join_requested)
-	#Steam.lobby_chat_update.connect(_on_lobby_chat_update)
+	Steam.lobby_chat_update.connect(_on_lobby_chat_update)
 	Steam.lobby_created.connect(_on_lobby_created)
 	#Steam.lobby_data_update.connect(_on_lobby_data_update)
 	#Steam.lobby_invite.connect(_on_lobby_invite)
@@ -157,7 +157,11 @@ func _on_p2p_session_request(remote_id: int) -> void:
 	make_p2p_handshake()
 
 func _on_lobby_join_requested(lobby_id: int, steam_id: int) -> void:
-	pass
+	# Get the lobby owner's name
+	var OWNER_NAME = Steam.getFriendPersonaName(steam_id)
+	print("[STEAM] Joining "+str(OWNER_NAME)+"'s lobby...\n")
+	# Attempt to join the lobby
+	join_lobby(lobby_id)
 
 func _on_lobby_created( connect: int, lobby_id: int) -> void:
 	if connect == 1:
@@ -214,11 +218,36 @@ func _on_lobby_joined( lobby: int, permissions: int, locked: bool, response: int
 		#_on_Open_Lobby_List_pressed()
 
 func _on_persona_change( steam_id: int, flags: int) -> void:
-	pass
+	# Make sure you're in a lobby and this user is valid or Steam might spam your console log
+	if NetworkManager.LOBBY_ID > 0:
+		print("A user (%s) had information change, update the lobby list" % steam_id)
+		# Update the player list
+		get_lobby_members()
 
 
 func _on_p2p_session_connect_fail(remote_steam_id: int, session_error: int) -> void:
-	pass
+	# Note the session errors are: 0 - none, 1 - target user not running the same game, 2 - local user doesn't own app, 3 - target user isn't connected to Steam, 4 - connection timed out, 5 - unused
+	# If no error was given
+	if session_error == 0:
+		print("[WARNING] Session failure with "+str(remote_steam_id)+" [no error given].")
+	# Else if target user was not running the same game
+	elif session_error == 1:
+		print("[WARNING] Session failure with "+str(remote_steam_id)+" [target user not running the same game].")
+	# Else if local user doesn't own app / game
+	elif session_error == 2:
+		print("[WARNING] Session failure with "+str(remote_steam_id)+" [local user doesn't own app / game].")
+	# Else if target user isn't connected to Steam
+	elif session_error == 3:
+		print("[WARNING] Session failure with "+str(remote_steam_id)+" [target user isn't connected to Steam].")
+	# Else if connection timed out
+	elif session_error == 4:
+		print("[WARNING] Session failure with "+str(remote_steam_id)+" [connection timed out].")
+	# Else if unused
+	elif session_error == 5:
+		print("[WARNING] Session failure with "+str(remote_steam_id)+" [unused].")
+	# Else no known error
+	else:
+		print("[WARNING] Session failure with "+str(remote_steam_id)+" [unknown error "+str(session_error)+"].")
 
 func _on_lobby_match_list(lobbies: Array):
 	for this_lobby in lobbies:
@@ -230,12 +259,33 @@ func _on_lobby_match_list(lobbies: Array):
 		lobby_lists_cont.add_child(server_banner_instance)
 #endregion
 
-
-
-
-
 #region SIGNALS
+func _on_lobby_chat_update(this_lobby_id: int, change_id: int, making_change_id: int, chat_state: int) -> void:
+	# Get the user who has made the lobby change
+	var changer_name: String = Steam.getFriendPersonaName(change_id)
 
+	# If a player has joined the lobby
+	if chat_state == Steam.CHAT_MEMBER_STATE_CHANGE_ENTERED:
+		print("%s has joined the lobby." % changer_name)
+
+	# Else if a player has left the lobby
+	elif chat_state == Steam.CHAT_MEMBER_STATE_CHANGE_LEFT:
+		print("%s has left the lobby." % changer_name)
+
+	# Else if a player has been kicked
+	elif chat_state == Steam.CHAT_MEMBER_STATE_CHANGE_KICKED:
+		print("%s has been kicked from the lobby." % changer_name)
+
+	# Else if a player has been banned
+	elif chat_state == Steam.CHAT_MEMBER_STATE_CHANGE_BANNED:
+		print("%s has been banned from the lobby." % changer_name)
+
+	# Else there was some unknown change
+	else:
+		print("%s did... something." % changer_name)
+
+	# Update the lobby now that a change has occurred
+	get_lobby_members()
 func _on_open_join_lobby_btn_pressed() -> void:
 	get_lobbies()
 	change_lobby_ui(MENU_VISIBILITY.JOIN_LOBBY_MENU)
