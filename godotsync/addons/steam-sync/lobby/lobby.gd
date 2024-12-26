@@ -154,7 +154,7 @@ func _on_p2p_session_request(remote_id: int) -> void:
 	# Accept the P2P session; can apply logic to deny this request if needed
 	Steam.acceptP2PSessionWithUser(remote_id)
 	# Make the initial handshake
-	#make_p2p_handshake()
+	make_p2p_handshake()
 
 func _on_lobby_join_requested(lobby_id: int, steam_id: int) -> void:
 	pass
