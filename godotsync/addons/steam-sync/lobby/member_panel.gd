@@ -3,7 +3,9 @@ extends Panel
 
 var AVATAR: Image
 
-	
+func _ready():
+	# connect some signals
+	var SIGNAL_CONNECT: int = Steam.connect("avatar_loaded", Callable(self, "_loaded_Avatar"))
 
 func _loaded_Avatar(id: int, this_size: int, buffer: PackedByteArray) -> void:
 	# Check we're only triggering a load for the right player, and check the data has actually changed
@@ -16,6 +18,5 @@ func _loaded_Avatar(id: int, this_size: int, buffer: PackedByteArray) -> void:
 		$MarginContainer/HBoxContainer/MemberTexture.set_texture(AVATAR_TEXTURE)
 
 func set_member_panel(steam_id:int,steam_name:String) -> void:
-	Steam.avatar_loaded.connect(_loaded_Avatar)
 	Steam.getPlayerAvatar(Steam.AVATAR_MEDIUM, steam_id)
 	$MarginContainer/HBoxContainer/MemberLbl.text =str(steam_name)
