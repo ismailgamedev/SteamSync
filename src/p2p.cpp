@@ -11,6 +11,7 @@ AP2P::~AP2P() {
 }
 
 void AP2P::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("send_P2P_Packet","channel","target","packet_data","send_type"), &AP2P::_send_P2P_Packet);
 }
 
 void AP2P::_ready() {

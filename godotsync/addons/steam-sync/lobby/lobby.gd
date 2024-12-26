@@ -114,8 +114,7 @@ func add_member_to_list(steam_id: int, steam_name: String):
 	THIS_MEMBER.set_member_panel(steam_id, steam_name)
 	# Add the child node
 	lobby_member_cont.add_child(THIS_MEMBER)
-func make_p2p_handshake() -> void:
-	pass
+
 	
 func change_lobby_ui(visibility : MENU_VISIBILITY):
 	match visibility:
@@ -140,8 +139,23 @@ func change_lobby_ui(visibility : MENU_VISIBILITY):
 			create_lobby_menu.visible = false
 			lobby_menu.visible = true
 			
-			
+func make_p2p_handshake() -> void:
+	print("Sending P2P handshake to the lobby")
+	P2P.send_P2P_Packet(0,0, {"message": "handshake", "from": NetworkManager.STEAM_ID},Steam.P2P_SEND_RELIABLE)
+	
 #region Steam Callbacks
+
+
+	
+func _on_p2p_session_request(remote_id: int) -> void:
+	# Get the requester's name
+	var this_requester: String = Steam.getFriendPersonaName(remote_id)
+	print("%s is requesting a P2P session" % this_requester)
+	# Accept the P2P session; can apply logic to deny this request if needed
+	Steam.acceptP2PSessionWithUser(remote_id)
+	# Make the initial handshake
+	#make_p2p_handshake()
+
 func _on_lobby_join_requested(lobby_id: int, steam_id: int) -> void:
 	pass
 
@@ -202,8 +216,6 @@ func _on_lobby_joined( lobby: int, permissions: int, locked: bool, response: int
 func _on_persona_change( steam_id: int, flags: int) -> void:
 	pass
 
-func _on_p2p_session_request( remote_steam_id: int) -> void:
-	pass
 
 func _on_p2p_session_connect_fail(remote_steam_id: int, session_error: int) -> void:
 	pass
