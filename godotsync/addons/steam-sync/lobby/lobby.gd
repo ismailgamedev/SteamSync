@@ -158,7 +158,7 @@ func change_lobby_ui(visibility : MENU_VISIBILITY):
 			
 func make_p2p_handshake() -> void:
 	print("Sending P2P handshake to the lobby")
-	P2P.send_P2P_Packet(0,0, {'TYPE':11,"message": "handshake", "from": NetworkManager.STEAM_ID},Steam.P2P_SEND_RELIABLE)
+	P2P.send_P2P_Packet(0,0, {"message": "handshake", "from": NetworkManager.STEAM_ID},Steam.P2P_SEND_RELIABLE)
 	
 #region Steam Callbacks
 
@@ -353,7 +353,7 @@ func _on_start_btn_pressed() -> void:
 
 func _on_ready_check_box_toggled(toggled_on: bool) -> void:
 	if Steam.getLobbyOwner(NetworkManager.LOBBY_ID) != NetworkManager.STEAM_ID:
-		var DATA : Dictionary = {"TYPE":NetworkManager.SEND_TYPE.READY,"steam_id":NetworkManager.STEAM_ID,"ready":toggled_on}
+		var DATA : Dictionary = {"TYPE":ANetworkManager.SEND_TYPE.READY,"steam_id":NetworkManager.STEAM_ID,"ready":toggled_on}
 		P2P.send_P2P_Packet(0,Steam.getLobbyOwner(NetworkManager.LOBBY_ID),DATA,Steam.P2P_SEND_RELIABLE)
 
 #endregion

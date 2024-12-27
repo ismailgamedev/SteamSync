@@ -65,6 +65,8 @@ void AP2P::_read_P2P_Packet() {
         Dictionary READABLE = UtilityFunctions::bytes_to_var(packed_code.decompress_dynamic(-1,FileAccess::COMPRESSION_GZIP));
         
 
+        
+
         if (READABLE.has("TYPE"))
         {
             handle_property_packets(READABLE);
@@ -121,10 +123,7 @@ void AP2P::handle_start_packet(Dictionary READABLE) {
                 }
         }
     }  
-    else if (type == NETWORK_MANAGER->HANDSHAKE)
-    {
-        UtilityFunctions::print("HANDSHAKE FROM: ",READABLE["from"]);
-    }
+
     
     
     
