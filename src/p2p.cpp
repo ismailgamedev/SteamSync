@@ -1,6 +1,5 @@
 #include "p2p.h"
-
-
+#include "command.h"
 static Steam *SteamPtr = nullptr; 
 
 
@@ -21,7 +20,7 @@ void AP2P::_ready() {
     }
     SteamPtr = Object::cast_to<Steam>(Engine::get_singleton()->get_singleton("Steam"));
     NETWORK_MANAGER = get_node<ANetworkManager>(NodePath("/root/NetworkManager"));
-
+    COMMAND = get_node<ACommand>(NodePath("/root/Command"));
     
 }
 
@@ -110,8 +109,8 @@ bool AP2P::_send_P2P_Packet(int16_t channel,int64_t target,Dictionary packet_dat
 
 
 void AP2P::handle_start_packet(Dictionary READABLE) {
-    int16_t type = READABLE["TYPE"];
-
+ 
+    uint16_t type = READABLE["TYPE"];
     if (type == ANetworkManager::READY)
     {
         for (int member_data = 0; member_data <NETWORK_MANAGER->MEMBERS_DATA.size(); member_data++)
@@ -122,10 +121,7 @@ void AP2P::handle_start_packet(Dictionary READABLE) {
                 }
         }
     } 
-    else if (type == ANetworkManager::HANDSHAKE)
-    {
-        UtilityFunctions::print("Handshake from:",READABLE["steam_id"]);
-    }
+
     
 
     
@@ -135,6 +131,21 @@ void AP2P::handle_start_packet(Dictionary READABLE) {
 }
 
 void AP2P::handle_event_packets(Dictionary READABLE) {
+    if (check_type(READABLE) == ANetworkManager::COMMAND)
+        {
+            UtilityFunctions::print("COMMAND: ",READABLE["method"]);
+            auto args = READABLE["args"];
+            if (args.operator!=(Variant::NIL))
+            {
+                COMMAND->callv(READABLE["method"],args);
+            }
+            else
+            {
+                COMMAND->call(READABLE["method"]);
+            }
+
+        }
+        
 }
 void AP2P::handle_property_packets(Dictionary READABLE) {
 }

@@ -1,4 +1,5 @@
 #include "command.h"
+#include "p2p.h"
 
 void ACommand::_bind_methods() {
     ClassDB::bind_method(D_METHOD("send"), &ACommand::send);
@@ -16,7 +17,7 @@ void ACommand::_ready() {
         return;
     }
     NETWORK_MANAGER = get_node<ANetworkManager>(NodePath("/root/NetworkManager"));
-    p2p = get_node<AP2P>(NodePath("/root/P2P"));
+    P2P = get_node<AP2P>(NodePath("/root/P2P"));
 }
 void ACommand::send(String method, Variant args) {
 
@@ -25,9 +26,8 @@ void ACommand::send(String method, Variant args) {
     DATA["player_id"] = NETWORK_MANAGER->STEAM_ID;
     DATA["method"] = method;    
     DATA["args"] = args;
-    p2p->_send_P2P_Packet(0,0,DATA,Steam::P2PSend::P2P_SEND_RELIABLE);
+    P2P->_send_P2P_Packet(0,0,DATA,Steam::P2PSend::P2P_SEND_RELIABLE);
 
-   
 }
 
 void ACommand::set_loading_screen(Ref<PackedScene> loading_screen) {

@@ -20,9 +20,9 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 		Engine::get_singleton()->register_singleton("Steam", Steam::get_singleton());
 	}
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
+		GDREGISTER_CLASS(AP2P);
 		GDREGISTER_CLASS(ANetworkManager);
 		GDREGISTER_CLASS(ACommand);
-		GDREGISTER_CLASS(AP2P);
 		
 	}
 	

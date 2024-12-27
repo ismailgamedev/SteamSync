@@ -11,6 +11,10 @@
 #include "godot_cpp/classes/scene_tree.hpp"
 #include "godot_cpp/variant/array.hpp"
 #include "godot_cpp/variant/variant.hpp"
+#include "godot_cpp/classes/resource.hpp"
+#include "godot_cpp/classes/packed_scene.hpp"
+
+
 using namespace godot;
 
 class ANetworkManager : public Node {
@@ -42,11 +46,13 @@ public:
 	bool IS_ON_STEAM_DECK;
 	bool IS_ONLINE;
 	bool IS_OWNED;
+	bool GAME_STARTED;
 	uint64_t STEAM_ID;
 	String STEAM_USERNAME;
 	uint64_t LOBBY_ID;
 	TypedArray<Dictionary> MEMBERS_DATA;
 	TypedArray<Dictionary> LOBBY_MEMBERS;
+	Ref<PackedScene> PLAYER_NODE;
 
 	
 	uint64_t get_steam_id();
@@ -67,8 +73,16 @@ public:
 	uint32_t get_app_id();
 	void set_app_id(uint32_t _app_id);
 
+	void set_game_started(bool _game_started);
+	bool get_game_started();
+
+	Ref<PackedScene> get_player_node();
+	void set_player_node(Ref<PackedScene> _player_node);
+
 	void  _ready() override;
 	void _process(double delta) override;
+
+	
 protected:
 	static void _bind_methods();
 private:

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bu2u4c4ldfj2l"]
+
+[ext_resource type="PackedScene" uid="uid://5o24adttr213" path="res://addons/steam-sync/example/scenes/player2d.tscn" id="1_wslqc"]
+
+[node name="ANetworkManager" type="ANetworkManager"]
+PLAYER_NODE = ExtResource("1_wslqc")

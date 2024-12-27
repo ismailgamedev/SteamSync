@@ -1,0 +1,31 @@
+[gd_scene load_steps=4 format=3 uid="uid://5o24adttr213"]
+
+[ext_resource type="Script" path="res://addons/steam-sync/example/scenes/player_2d.gd" id="1_7evuc"]
+[ext_resource type="Texture2D" uid="uid://bpo8pbwcpfbyv" path="res://addons/steam-sync/example/assets/2d/char.png" id="2_1lbm1"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_njlh8"]
+radius = 3.0
+height = 14.0
+
+[node name="Player2D" type="CharacterBody2D"]
+script = ExtResource("1_7evuc")
+
+[node name="PlayerSprite" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(-34, -4)
+texture = ExtResource("2_1lbm1")
+offset = Vector2(34, -12)
+hframes = 5
+vframes = 9
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -7)
+shape = SubResource("CapsuleShape2D_njlh8")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, -25)
+enabled = false
+zoom = Vector2(6.075, 6.075)
+process_callback = 0
+position_smoothing_enabled = true
+rotation_smoothing_enabled = true

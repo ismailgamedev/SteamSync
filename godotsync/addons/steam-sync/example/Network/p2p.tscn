@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dexffr2wyotr4"]
 
-[ext_resource type="Script" path="res://Network/p_2p.gd" id="1_wkr0h"]
+[ext_resource type="Script" path="res://addons/steam-sync/example/Network/p_2p.gd" id="1_wkr0h"]
 
 [node name="AP2P" type="AP2P"]
 script = ExtResource("1_wkr0h")

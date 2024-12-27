@@ -11,14 +11,20 @@ void ANetworkManager::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_lobby_id"), &ANetworkManager::get_lobby_id);
     ClassDB::bind_method(D_METHOD("get_lobby_members"), &ANetworkManager::get_lobby_members);
     ClassDB::bind_method(D_METHOD("get_members_data"), &ANetworkManager::get_members_data);
-    ClassDB::bind_method(D_METHOD("set_members_data", "_members_data"), &ANetworkManager::set_members_data);
+    ClassDB::bind_method(D_METHOD("get_game_started"), &ANetworkManager::get_game_started);
+    ClassDB::bind_method(D_METHOD("get_player_node"), &ANetworkManager::get_player_node);
 
+    ClassDB::bind_method(D_METHOD("set_player_node", "_player_node"), &ANetworkManager::set_player_node);
+    ClassDB::bind_method(D_METHOD("set_members_data", "_members_data"), &ANetworkManager::set_members_data);
+    ClassDB::bind_method(D_METHOD("set_game_started", "_game_started"), &ANetworkManager::set_game_started);
     ClassDB::bind_method(D_METHOD("set_app_id", "_app_id"), &ANetworkManager::set_app_id);
     ClassDB::bind_method(D_METHOD("set_lobby_id", "_lobby_id"), &ANetworkManager::set_lobby_id);
     ClassDB::bind_method(D_METHOD("set_lobby_members", "_lobby_members"), &ANetworkManager::set_lobby_members);
     ClassDB::bind_method(D_METHOD("set_steam_username", "_steam_username"), &ANetworkManager::set_steam_username);
     ClassDB::bind_method(D_METHOD("set_steam_id", "_steam_id"), &ANetworkManager::set_steam_id);
 
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "PLAYER_NODE",PROPERTY_HINT_RESOURCE_TYPE, "PackedScene"), "set_player_node", "get_player_node");
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "GAME_STARTED"), "set_game_started", "get_game_started");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "APP_ID"), "set_app_id", "get_app_id");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "LOBBY_ID"), "set_lobby_id", "get_lobby_id");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "STEAM_ID"), "set_steam_id", "get_steam_id");
@@ -49,6 +55,7 @@ ANetworkManager::ANetworkManager() {
 	STEAM_ID = 0;
 	STEAM_USERNAME = "";
 	LOBBY_ID = 0;
+    GAME_STARTED = false;
 }
 
 
@@ -145,4 +152,19 @@ void ANetworkManager::set_members_data(TypedArray<Dictionary> _members_data) {
 
 TypedArray<Dictionary> ANetworkManager::get_members_data() {
     return MEMBERS_DATA;    
+}
+
+bool ANetworkManager::get_game_started() {
+    return GAME_STARTED;
+}
+
+void ANetworkManager::set_game_started(bool _game_started) {
+    GAME_STARTED = _game_started;    
+}
+void ANetworkManager::set_player_node(Ref<PackedScene> _player_node) {
+    PLAYER_NODE = _player_node;
+}
+
+Ref<PackedScene> ANetworkManager::get_player_node() {
+    return PLAYER_NODE;
 }

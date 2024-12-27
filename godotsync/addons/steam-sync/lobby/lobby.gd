@@ -58,6 +58,9 @@ func join_lobby(this_lobby_id: int) -> void:
 	Steam.joinLobby(this_lobby_id)
 
 func get_lobbies() -> void:
+	await get_tree().create_timer(0.4).timeout
+	for child in lobby_lists_cont.get_children():
+		child.queue_free()
 	# Set distance to worldwide
 	Steam.addRequestLobbyListDistanceFilter(lobby_distance_filter.get_selected_id())
 
@@ -217,7 +220,6 @@ func _on_lobby_joined( lobby: int, permissions: int, locked: bool, response: int
 		change_lobby_ui(MENU_VISIBILITY.LOBBY_MENU)
 		if Steam.getLobbyOwner(NetworkManager.LOBBY_ID) == NetworkManager.STEAM_ID:
 			start_btn.visible = true
-		make_p2p_handshake()
 		
 	# Else it failed for some reason
 	else:
@@ -276,7 +278,7 @@ func _on_lobby_match_list(lobbies: Array):
 		var lobby_name : String = Steam.getLobbyData(this_lobby, "name")
 		var lobby_num_members: int = Steam.getNumLobbyMembers(this_lobby)
 		var max_num_members : int = Steam.getLobbyMemberLimit(this_lobby)
-		server_banner_instance.set_server_banner(lobby_name,lobby_num_members,max_num_members)
+		server_banner_instance.set_server_banner(lobby_name,max_num_members,lobby_num_members,this_lobby)
 		lobby_lists_cont.add_child(server_banner_instance)
 #endregion
 
@@ -346,7 +348,7 @@ func all_ready(my_array : Array[Dictionary]) -> bool:
 func _on_start_btn_pressed() -> void:
 	if Steam.getLobbyOwner(NetworkManager.LOBBY_ID) == NetworkManager.STEAM_ID:
 		if all_ready(NetworkManager.MEMBERS_DATA) == true:
-			print("All Members are Ready")
+			SceneManager.change_scene("res://addons/steam-sync/example/levels/scene.tscn")
 		else:
 			print("All Members are not Ready")
 
@@ -356,5 +358,8 @@ func _on_ready_check_box_toggled(toggled_on: bool) -> void:
 	if Steam.getLobbyOwner(NetworkManager.LOBBY_ID) != NetworkManager.STEAM_ID:
 		var DATA : Dictionary = {"TYPE":ANetworkManager.SEND_TYPE.READY,"steam_id":NetworkManager.STEAM_ID,"ready":toggled_on}
 		P2P.send_P2P_Packet(0,Steam.getLobbyOwner(NetworkManager.LOBBY_ID),DATA,Steam.P2P_SEND_RELIABLE)
-
+	else:
+		for member in NetworkManager.MEMBERS_DATA:
+			if member["steam_id"] == NetworkManager.STEAM_ID:
+				member["ready"] = toggled_on
 #endregion

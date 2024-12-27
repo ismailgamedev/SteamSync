@@ -17,9 +17,15 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-NetworkManager="*res://Network/network_manager.tscn"
-P2P="*res://Network/p2p.tscn"
-Command="*res://Network/Command.tscn"
+NetworkManager="*res://addons/steam-sync/example/Network/network_manager.tscn"
+P2P="*res://addons/steam-sync/example/Network/p2p.tscn"
+Command="*res://addons/steam-sync/example/Network/Command.tscn"
+SceneManager="*res://addons/steam-sync/SceneChanger/SceneManager.gd"
+
+[display]
+
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 
 [editor_plugins]
 
