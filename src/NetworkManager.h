@@ -30,7 +30,8 @@ public:
 		SCENE_LOADED = 7,
 		COMMAND = 8,
 		VOICE = 9,
-		RAGDOLL = 10
+		RAGDOLL = 10,
+		HANDSHAKE = 11
 	};
 
 	/// EXPORT VARIABLES

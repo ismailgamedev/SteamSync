@@ -67,7 +67,6 @@ void AP2P::_read_P2P_Packet() {
 
         if (READABLE.has("TYPE"))
         {
-            UtilityFunctions::print("TYPE: ",READABLE["TYPE"]);
             handle_property_packets(READABLE);
             handle_event_packets(READABLE);
             handle_start_packet(READABLE);
@@ -109,13 +108,24 @@ bool AP2P::_send_P2P_Packet(int16_t channel,int64_t target,Dictionary packet_dat
 
 
 void AP2P::handle_start_packet(Dictionary READABLE) {
+    int type = READABLE["TYPE"];
 
-
-    UtilityFunctions::print("READY PACKET");
-    for (int member_data = 0; member_data <NETWORK_MANAGER->LOBBY_MEMBERS.size(); member_data++)
+    if (type != NETWORK_MANAGER->READY)
     {
-        UtilityFunctions::print("STEAM_ID: ",NETWORK_MANAGER->LOBBY_MEMBERS[member_data]["steam_id"]);
+        for (int member_data = 0; member_data <NETWORK_MANAGER->MEMBERS_DATA.size(); member_data++)
+        {
+                UtilityFunctions::print("STEAM_ID: ",NETWORK_MANAGER->MEMBERS_DATA[member_data]["steam_id"]);
+                Dictionary data = NETWORK_MANAGER->MEMBERS_DATA[member_data];
+                if (data["steam_id"] == READABLE["steam_id"]){
+                    data["ready"] = READABLE["ready"];
+                }
+        }
+    }  
+    else if (type == NETWORK_MANAGER->HANDSHAKE)
+    {
+        UtilityFunctions::print("HANDSHAKE FROM: ",READABLE["from"]);
     }
+    
     
     
     

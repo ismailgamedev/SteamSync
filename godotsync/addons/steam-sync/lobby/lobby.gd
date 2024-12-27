@@ -158,7 +158,7 @@ func change_lobby_ui(visibility : MENU_VISIBILITY):
 			
 func make_p2p_handshake() -> void:
 	print("Sending P2P handshake to the lobby")
-	P2P.send_P2P_Packet(0,0, {"message": "handshake", "from": NetworkManager.STEAM_ID},Steam.P2P_SEND_RELIABLE)
+	P2P.send_P2P_Packet(0,0, {'TYPE':11,"message": "handshake", "from": NetworkManager.STEAM_ID},Steam.P2P_SEND_RELIABLE)
 	
 #region Steam Callbacks
 
