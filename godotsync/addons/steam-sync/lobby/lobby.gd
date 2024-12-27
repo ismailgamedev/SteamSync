@@ -158,10 +158,10 @@ func change_lobby_ui(visibility : MENU_VISIBILITY):
 			
 func make_p2p_handshake() -> void:
 	print("Sending P2P handshake to the lobby")
-	P2P.send_P2P_Packet(0,0, {"message": "handshake", "from": NetworkManager.STEAM_ID},Steam.P2P_SEND_RELIABLE)
+	P2P.send_P2P_Packet(0,0, {"TYPE":ANetworkManager.HANDSHAKE,"message": "handshake", "from": NetworkManager.STEAM_ID},Steam.P2P_SEND_RELIABLE)
 	
 #region Steam Callbacks
-
+s
 
 	
 func _on_p2p_session_request(remote_id: int) -> void:
@@ -217,6 +217,7 @@ func _on_lobby_joined( lobby: int, permissions: int, locked: bool, response: int
 		change_lobby_ui(MENU_VISIBILITY.LOBBY_MENU)
 		if Steam.getLobbyOwner(NetworkManager.LOBBY_ID) == NetworkManager.STEAM_ID:
 			start_btn.visible = true
+		make_p2p_handshake()
 		
 	# Else it failed for some reason
 	else:

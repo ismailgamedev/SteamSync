@@ -116,13 +116,17 @@ void AP2P::handle_start_packet(Dictionary READABLE) {
     {
         for (int member_data = 0; member_data <NETWORK_MANAGER->MEMBERS_DATA.size(); member_data++)
         {
-                UtilityFunctions::print("STEAM_ID: ",NETWORK_MANAGER->MEMBERS_DATA[member_data]["steam_id"]);
                 Dictionary data = NETWORK_MANAGER->MEMBERS_DATA[member_data];
                 if (data["steam_id"] == READABLE["steam_id"]){
                     data["ready"] = READABLE["ready"];
                 }
         }
-    }  
+    } 
+    else if (type == ANetworkManager::HANDSHAKE)
+    {
+        UtilityFunctions::print("Handshake from:",READABLE["steam_id"]);
+    }
+    
 
     
     
