@@ -110,9 +110,9 @@ bool AP2P::_send_P2P_Packet(int16_t channel,int64_t target,Dictionary packet_dat
 
 
 void AP2P::handle_start_packet(Dictionary READABLE) {
-    int type = READABLE["TYPE"];
+    int16_t type = READABLE["TYPE"];
 
-    if (type != NETWORK_MANAGER->READY)
+    if (type == ANetworkManager::READY)
     {
         for (int member_data = 0; member_data <NETWORK_MANAGER->MEMBERS_DATA.size(); member_data++)
         {
