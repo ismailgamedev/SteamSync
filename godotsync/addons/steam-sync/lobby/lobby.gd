@@ -286,6 +286,8 @@ func _on_lobby_chat_update(this_lobby_id: int, change_id: int, making_change_id:
 	# If a player has joined the lobby
 	if chat_state == Steam.CHAT_MEMBER_STATE_CHANGE_ENTERED:
 		print("%s has joined the lobby." % changer_name)
+		if Steam.getLobbyOwner(NetworkManager.LOBBY_ID) == NetworkManager.STEAM_ID:
+			NetworkManager.MEMBERS_DATA.append({"steam_id":change_id, "ready":false })
 
 	# Else if a player has left the lobby
 	elif chat_state == Steam.CHAT_MEMBER_STATE_CHANGE_LEFT:
