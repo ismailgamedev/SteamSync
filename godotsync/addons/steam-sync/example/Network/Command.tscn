@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://3t5rs0iqy201"]
+[gd_scene load_steps=3 format=3 uid="uid://3t5rs0iqy201"]
 
 [ext_resource type="PackedScene" uid="uid://bh4cllystivm8" path="res://addons/steam-sync/SceneChanger/LoadingScreen.tscn" id="1_pvnrw"]
+[ext_resource type="Script" path="res://addons/steam-sync/example/Network/command.gd" id="2_ugfhi"]
 
 [node name="Command" type="ACommand"]
 loading_screen = ExtResource("1_pvnrw")
+script = ExtResource("2_ugfhi")
