@@ -111,6 +111,7 @@ void AP2P::handle_start_packet(Dictionary READABLE) {
     if (READABLE.get("TYPE",Variant::NIL).operator==(static_cast<Variant>(ANetworkManager::READY)))
     {
         NETWORK_MANAGER->MEMBERS_DATA[READABLE["steam_id"]] = READABLE["ready"];
+        UtilityFunctions::print("READY PACKET");
     }
     
 }

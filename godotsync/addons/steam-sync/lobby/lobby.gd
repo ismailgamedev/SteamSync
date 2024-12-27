@@ -82,6 +82,7 @@ func leave_lobby() -> void:
 				Steam.closeP2PSessionWithUser(this_member['steam_id'])
 
 		# Clear the local lobby list
+		NetworkManager.MEMBERS_DATA.clear()
 		NetworkManager.LOBBY_MEMBERS.clear()
 
 func get_lobby_members() -> void:
@@ -292,6 +293,7 @@ func _on_lobby_chat_update(this_lobby_id: int, change_id: int, making_change_id:
 	# Else if a player has left the lobby
 	elif chat_state == Steam.CHAT_MEMBER_STATE_CHANGE_LEFT:
 		print("%s has left the lobby." % changer_name)
+		NetworkManager.MEMBERS_DATA.erase(change_id)
 
 	# Else if a player has been kicked
 	elif chat_state == Steam.CHAT_MEMBER_STATE_CHANGE_KICKED:
@@ -352,6 +354,6 @@ func _on_start_btn_pressed() -> void:
 func _on_ready_check_box_toggled(toggled_on: bool) -> void:
 	if Steam.getLobbyOwner(NetworkManager.STEAM_ID) != NetworkManager.STEAM_ID:
 		var DATA : Dictionary = {"TYPE":NetworkManager.SEND_TYPE.READY,"steam_id":NetworkManager.STEAM_ID,"ready":toggled_on}
-		P2P.send_P2P_Packet(0,Steam.getLobbyOwner(NetworkManager.STEAM_ID),DATA,Steam.P2P_SEND_RELIABLE)
+		P2P.send_P2P_Packet(0,Steam.getLobbyOwner(NetworkManager.LOBBY_ID),DATA,Steam.P2P_SEND_RELIABLE)
 
 #endregion
