@@ -60,13 +60,15 @@ void AP2P::_read_P2P_Packet() {
             UtilityFunctions::print("WARNING: read an empty packet with non-zero size!");
         }
         PackedByteArray packed_code  = this_packet["data"];
-        
-        Dictionary READABLE = UtilityFunctions::bytes_to_var(packed_code.decompress(-1,FileAccess::COMPRESSION_GZIP));
+        UtilityFunctions::print("PACKET SIZE: ",packed_code.size());
+        PackedByteArray decompressed = packed_code.decompress_dynamic(-1,FileAccess::COMPRESSION_GZIP);
+        Dictionary READABLE = UtilityFunctions::bytes_to_var(decompressed);
         
         int64_t sender = this_packet["sender"];
 
         if (READABLE.has("TYPE"))
         {
+            UtilityFunctions::print("TYPE: ",READABLE["TYPE"]);
             handle_property_packets(READABLE);
             handle_event_packets(READABLE);
             handle_start_packet(READABLE);
@@ -88,7 +90,7 @@ bool AP2P::_send_P2P_Packet(int16_t channel,int64_t target,Dictionary packet_dat
     {
         if (NETWORK_MANAGER->LOBBY_MEMBERS.size() > 1)
         {
-            for (int member = 0; member == NETWORK_MANAGER->LOBBY_MEMBERS.size(); member++)
+            for (int member = 0; member <NETWORK_MANAGER->LOBBY_MEMBERS.size(); member++)
             {
                 if (member["steam_id"] != NETWORK_MANAGER->STEAM_ID)
                 {
