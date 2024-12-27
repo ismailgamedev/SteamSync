@@ -60,9 +60,9 @@ void AP2P::_read_P2P_Packet() {
             UtilityFunctions::print("WARNING: read an empty packet with non-zero size!");
         }
         PackedByteArray packed_code  = this_packet["data"];
-        UtilityFunctions::print("PACKET SIZE: ",packed_code.size());
-        PackedByteArray decompressed = packed_code.decompress_dynamic(-1,FileAccess::COMPRESSION_GZIP);
-        Dictionary READABLE = UtilityFunctions::bytes_to_var(decompressed);
+       
+
+        Dictionary READABLE = UtilityFunctions::bytes_to_var(packed_code.decompress_dynamic(-1,FileAccess::COMPRESSION_GZIP));
         
         int64_t sender = this_packet["sender"];
 
