@@ -10,7 +10,8 @@ void ANetworkManager::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_steam_username"), &ANetworkManager::get_steam_username);
     ClassDB::bind_method(D_METHOD("get_lobby_id"), &ANetworkManager::get_lobby_id);
     ClassDB::bind_method(D_METHOD("get_lobby_members"), &ANetworkManager::get_lobby_members);
-
+    ClassDB::bind_method(D_METHOD("get_members_data"), &ANetworkManager::get_members_data);
+    ClassDB::bind_method(D_METHOD("set_members_data", "_members_data"), &ANetworkManager::set_members_data);
 
     ClassDB::bind_method(D_METHOD("set_app_id", "_app_id"), &ANetworkManager::set_app_id);
     ClassDB::bind_method(D_METHOD("set_lobby_id", "_lobby_id"), &ANetworkManager::set_lobby_id);
@@ -23,7 +24,7 @@ void ANetworkManager::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::INT, "STEAM_ID"), "set_steam_id", "get_steam_id");
     ADD_PROPERTY(PropertyInfo(Variant::STRING, "STEAM_USERNAME"), "set_steam_username", "get_steam_username");
     ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "LOBBY_MEMBERS"), "set_lobby_members", "get_lobby_members");
-    
+    ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "MEMBERS_DATA"), "set_members_data", "get_members_data");
     BIND_ENUM_CONSTANT(START);
     BIND_ENUM_CONSTANT(READY);
     BIND_ENUM_CONSTANT(START_SCENE);
@@ -136,4 +137,11 @@ TypedArray<Dictionary> ANetworkManager::get_lobby_members() {
 
 void ANetworkManager::set_lobby_members(TypedArray<Dictionary> _lobby_members) {
     LOBBY_MEMBERS = _lobby_members;
+}
+void ANetworkManager::set_members_data(TypedArray<Dictionary> _members_data) {
+    MEMBERS_DATA = _members_data;
+}
+
+TypedArray<Dictionary> ANetworkManager::get_members_data() {
+    return MEMBERS_DATA;    
 }

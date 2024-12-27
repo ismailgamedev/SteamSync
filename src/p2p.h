@@ -13,6 +13,8 @@
 #include "godot_cpp/variant/variant.hpp"
 #include "NetworkManager.h"
 #include "godot_cpp/classes/file_access.hpp"
+#include <godot_cpp/core/binder_common.hpp>
+#include <godot_cpp/core/gdvirtual.gen.inc>
 namespace godot {
 
 class AP2P : public Node
@@ -37,6 +39,7 @@ public:
     void handle_event_packets(Dictionary READABLE);
     void handle_property_packets(Dictionary READABLE);
     void handle_voice_packets(Dictionary READABLE);
+    virtual void  handle_custom_packets(Dictionary READABLE);
     void _process(double delta) override;
     void _ready() override;
 };

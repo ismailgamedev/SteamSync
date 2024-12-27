@@ -13,7 +13,7 @@ extends Control
 @onready var lobby_menu : Control = $CenterContainer/LobbyMenu
 @onready var lobby_member_cont : Control = $CenterContainer/LobbyMenu/MarginContainer/HBoxContainer/VBoxContainer/PanelContainer/ScrollContainer/MarginContainer/MemberCont
 @onready var lobby_member_panel : PackedScene = preload("res://addons/steam-sync/lobby/member_panel.tscn")
-
+@onready var start_btn : Button = $CenterContainer/LobbyMenu/MarginContainer/HBoxContainer/VBoxContainer2/StartBtn
 enum MENU_VISIBILITY {LOBBY_MAIN,CREATE_LOBBY_MENU,JOIN_LOBBY_MENU,LOBBY_MENU}
 
 func _ready() -> void:
@@ -52,9 +52,9 @@ func check_command_line() -> void:
 
 func join_lobby(this_lobby_id: int) -> void:
 	print("Attempting to join lobby %s" % this_lobby_id)
-
+	
 	NetworkManager.LOBBY_MEMBERS.clear()
-
+	
 	Steam.joinLobby(this_lobby_id)
 
 func get_lobbies() -> void:
@@ -99,9 +99,10 @@ func get_lobby_members() -> void:
 		
 		# Get the member's Steam name
 		var member_steam_name: String = Steam.getFriendPersonaName(member_steam_id)
-
+		
 		# Add them to the list
 		add_member_to_list(member_steam_id,member_steam_name)
+		
 
 func add_member_to_list(steam_id: int, steam_name: String):
 	print("Adding new player to the list: "+str(steam_id)+" / "+str(steam_name))
@@ -114,6 +115,21 @@ func add_member_to_list(steam_id: int, steam_name: String):
 	THIS_MEMBER.set_member_panel(steam_id, steam_name)
 	# Add the child node
 	lobby_member_cont.add_child(THIS_MEMBER)
+
+	
+		
+		
+func set_members_data():
+	if NetworkManager.LOBBY_ID != 0:
+		if Steam.getLobbyOwner(NetworkManager.LOBBY_ID) == NetworkManager.STEAM_ID:
+			var num_of_members: int = Steam.getNumLobbyMembers(NetworkManager.LOBBY_ID)
+			for this_member in range(0, num_of_members):
+				# Get the member's Steam ID
+				var member_steam_id: int = Steam.getLobbyMemberByIndex(NetworkManager.LOBBY_ID, this_member)
+				
+				# Get the member's Steam name
+				var member_steam_name: String = Steam.getFriendPersonaName(member_steam_id)
+				NetworkManager.MEMBERS_DATA.append({"steam_id":member_steam_id, "ready":false })
 
 	
 func change_lobby_ui(visibility : MENU_VISIBILITY):
@@ -194,9 +210,12 @@ func _on_lobby_joined( lobby: int, permissions: int, locked: bool, response: int
 		# Get the lobby members
 		
 		# Make the initial handshake
+		set_members_data()
 		make_p2p_handshake()
 		get_lobby_members()
 		change_lobby_ui(MENU_VISIBILITY.LOBBY_MENU)
+		if Steam.getLobbyOwner(NetworkManager.LOBBY_ID) == NetworkManager.STEAM_ID:
+			start_btn.visible = true
 		
 	# Else it failed for some reason
 	else:
@@ -312,12 +331,25 @@ func _on_create_lobby_btn_pressed() -> void:
 
 func _on_refresh_btn_pressed() -> void:
 	get_lobbies()
+
+func all_ready(my_array : Array[Dictionary]) -> bool:
+	for item in my_array:
+		if not item["ready"]:
+			return false
+	return true
 	
 func _on_start_btn_pressed() -> void:
-	pass # Replace with function body.
+	if Steam.getLobbyOwner(NetworkManager.LOBBY_ID) == NetworkManager.STEAM_ID:
+		if all_ready(NetworkManager.MEMBERS_DATA) == true:
+			print("All Members are Ready")
+		else:
+			print("All Members are not Ready")
+
 
 
 func _on_ready_check_box_toggled(toggled_on: bool) -> void:
-	pass # Replace with function body.
+	if Steam.getLobbyOwner(NetworkManager.STEAM_ID) != NetworkManager.STEAM_ID:
+		var DATA : Dictionary = {"TYPE":NetworkManager.SEND_TYPE.READY,"steam_id":NetworkManager.STEAM_ID,"ready":toggled_on}
+		P2P.send_P2P_Packet(0,Steam.getLobbyOwner(NetworkManager.STEAM_ID),DATA,Steam.P2P_SEND_RELIABLE)
 
 #endregion

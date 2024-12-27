@@ -247,6 +247,7 @@ layout_mode = 2
 text = "Ready"
 
 [node name="StartBtn" type="Button" parent="CenterContainer/LobbyMenu/MarginContainer/HBoxContainer/VBoxContainer2"]
+visible = false
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 text = "Start"

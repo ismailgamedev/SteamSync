@@ -44,6 +44,7 @@ public:
 	uint64_t STEAM_ID;
 	String STEAM_USERNAME;
 	uint64_t LOBBY_ID;
+	TypedArray<Dictionary> MEMBERS_DATA;
 	TypedArray<Dictionary> LOBBY_MEMBERS;
 
 	
@@ -58,6 +59,9 @@ public:
 
 	TypedArray<Dictionary> get_lobby_members();
 	void set_lobby_members(TypedArray<Dictionary>  _lobby_members);
+
+	TypedArray<Dictionary> get_members_data();
+	void set_members_data(TypedArray<Dictionary>  _members_data);
 
 	uint32_t get_app_id();
 	void set_app_id(uint32_t _app_id);

@@ -12,6 +12,7 @@ AP2P::~AP2P() {
 
 void AP2P::_bind_methods() {
     ClassDB::bind_method(D_METHOD("send_P2P_Packet","channel","target","packet_data","send_type"), &AP2P::_send_P2P_Packet);
+    
 }
 
 void AP2P::_ready() {
@@ -70,6 +71,7 @@ void AP2P::_read_P2P_Packet() {
             handle_event_packets(READABLE);
             handle_start_packet(READABLE);
             handle_voice_packets(READABLE);
+            handle_custom_packets(READABLE);
         }
         
     }
@@ -106,6 +108,10 @@ bool AP2P::_send_P2P_Packet(int16_t channel,int64_t target,Dictionary packet_dat
 
 
 void AP2P::handle_start_packet(Dictionary READABLE) {
+    if (READABLE.get("TYPE",Variant::NIL).operator==(static_cast<Variant>(ANetworkManager::READY)))
+    {
+        NETWORK_MANAGER->MEMBERS_DATA[READABLE["steam_id"]] = READABLE["ready"];
+    }
     
 }
 
@@ -116,3 +122,5 @@ void AP2P::handle_property_packets(Dictionary READABLE) {
 void AP2P::handle_voice_packets(Dictionary READABLE) {
 }
 
+void AP2P::handle_custom_packets(Dictionary READABLE) {
+}
