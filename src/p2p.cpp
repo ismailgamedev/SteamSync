@@ -64,7 +64,6 @@ void AP2P::_read_P2P_Packet() {
 
         Dictionary READABLE = UtilityFunctions::bytes_to_var(packed_code.decompress_dynamic(-1,FileAccess::COMPRESSION_GZIP));
         
-        int64_t sender = this_packet["sender"];
 
         if (READABLE.has("TYPE"))
         {
@@ -110,11 +109,15 @@ bool AP2P::_send_P2P_Packet(int16_t channel,int64_t target,Dictionary packet_dat
 
 
 void AP2P::handle_start_packet(Dictionary READABLE) {
-    if (READABLE.get("TYPE",Variant::NIL).operator==(static_cast<Variant>(ANetworkManager::READY)))
+
+
+    UtilityFunctions::print("READY PACKET");
+    for (int member_data = 0; member_data <NETWORK_MANAGER->LOBBY_MEMBERS.size(); member_data++)
     {
-        NETWORK_MANAGER->MEMBERS_DATA[READABLE["steam_id"]] = READABLE["ready"];
-        UtilityFunctions::print("READY PACKET");
+        UtilityFunctions::print("STEAM_ID: ",NETWORK_MANAGER->LOBBY_MEMBERS[member_data]["steam_id"]);
     }
+    
+    
     
 }
 
