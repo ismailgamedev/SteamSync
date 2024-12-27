@@ -161,7 +161,7 @@ func make_p2p_handshake() -> void:
 	P2P.send_P2P_Packet(0,0, {"TYPE":ANetworkManager.HANDSHAKE,"message": "handshake", "from": NetworkManager.STEAM_ID},Steam.P2P_SEND_RELIABLE)
 	
 #region Steam Callbacks
-s
+
 
 	
 func _on_p2p_session_request(remote_id: int) -> void:

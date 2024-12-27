@@ -39,7 +39,7 @@ public:
     void handle_event_packets(Dictionary READABLE);
     void handle_property_packets(Dictionary READABLE);
     void handle_voice_packets(Dictionary READABLE);
-    virtual void  handle_custom_packets(Dictionary READABLE);
+    void handle_custom_packets(Dictionary READABLE);
     void _process(double delta) override;
     void _ready() override;
 };
