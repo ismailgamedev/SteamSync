@@ -114,7 +114,8 @@ void ATransformSync2D::_ready() {
     
 }
 
-void ATransformSync2D::_physics_process(double delta) {
+
+void ATransformSync2D::_process(double delta) {
     if (Engine::get_singleton()->is_editor_hint()) {
         return;
     }
@@ -150,37 +151,32 @@ void ATransformSync2D::_physics_process(double delta) {
                 }
             }
         }
-
-
-    }
-    
-}
-
-void ATransformSync2D::_process(double delta) {
-    if(!IS_OWNER && NETWORK_MANAGER->GAME_STARTED)
-    {
-        if (transform_buffer[0].operator!=(Variant::NIL))
+        else if(!IS_OWNER)
         {
-            uint64_t last_index = last_index_buffer[0];
-            uint64_t current_index = transform_buffer[0]["Idx"];
-            UtilityFunctions::print("last_index: ",last_index," current_index: ",current_index);
-            UtilityFunctions::print("Transform_Buffer: ",transform_buffer[0]);
-            if (current_index>=last_index)
+            if (transform_buffer[0].operator!=(Variant::NIL))
             {
+                uint64_t last_index = last_index_buffer[0];
+                uint64_t current_index = transform_buffer[0]["Idx"];
+                // UtilityFunctions::print("last_index: ",last_index," current_index: ",current_index);
+                // UtilityFunctions::print("Transform_Buffer: ",transform_buffer[0]);
+                if (current_index>=last_index)
+                {
+                        
                     
-                   
-                //UtilityFunctions::print("lerp: ",lerped_value);
-                Vector2 value = transform_buffer[0].get("value");
-                Vector2 current_position = Object::cast_to<Node2D>(get_parent())->get_global_position();
-                UtilityFunctions::print("current_position: ",current_position," value: ",value);
+                    //UtilityFunctions::print("lerp: ",lerped_value);
+                    Vector2 value = transform_buffer[0].get("value");
+                    Vector2 current_position = Object::cast_to<Node2D>(get_parent())->get_global_position();
+                    // UtilityFunctions::print("current_position: ",current_position," value: ",value);
 
-                Vector2 lerped_value = UtilityFunctions::lerp(current_position, value, interpolation_pos);
-                Object::cast_to<Node2D>(get_parent())->set_global_position(lerped_value);
-                last_index_buffer[0] = transform_buffer[0]["Idx"];
+                    Vector2 lerped_value = UtilityFunctions::lerp(current_position, value, interpolation_pos);
+                    Object::cast_to<Node2D>(get_parent())->set_global_position(lerped_value);
+                    last_index_buffer[0] = transform_buffer[0]["Idx"];
+                }
+
             }
-
         }
     }
+
 }
 
 

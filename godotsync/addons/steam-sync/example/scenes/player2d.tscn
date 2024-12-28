@@ -31,5 +31,4 @@ position_smoothing_enabled = true
 rotation_smoothing_enabled = true
 
 [node name="ATransformSync2D" type="ATransformSync2D" parent="."]
-interpolation_pos = 0.3
 OBJECT_PLAYER = NodePath("..")

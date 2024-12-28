@@ -96,7 +96,6 @@ public:
     void sync_scale();
 
     void _ready() override;
-    void _physics_process(double delta) override;
     void _process(double delta) override;
 
     void set_interpolation_pos(double _interpolation_pos);
