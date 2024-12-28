@@ -166,9 +166,9 @@ void AP2P::handle_event_packets(Dictionary READABLE) {
 void AP2P::handle_property_packets(Dictionary READABLE) {
     if (check_type(READABLE) == ANetworkManager::TRANFORM_SYNC && NETWORK_MANAGER->GAME_STARTED)
     {
-        if (READABLE["property"] == "global_position"){
-            get_tree()->get_edited_scene_root()->get_node<ATransformSync2D>(READABLE["node_path"])->transform_buffer[0] = READABLE;
-        }
+        // if (READABLE["property"] == "global_position"){
+        //     get_tree()->get_edited_scene_root()->get_node<ATransformSync2D>(READABLE["node_path"])->transform_buffer[0] = READABLE;
+        // }
     }
     
 }
