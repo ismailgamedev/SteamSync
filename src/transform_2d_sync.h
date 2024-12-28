@@ -41,6 +41,7 @@ public:
     bool is_only_lobby_owner;
     NodePath object_player;
 
+    bool IS_OWNER;
     bool POSITION;
     bool ROTATION;
     bool SCALE;
@@ -54,7 +55,7 @@ public:
     Vector2 last_scale;
 
     TypedArray<Dictionary> transform_buffer;
-    PackedInt64Array packet_index_buffer;
+    PackedInt64Array last_index_buffer;
     
     double call_per_sec_pos;
     double call_per_sec_rot;

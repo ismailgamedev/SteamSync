@@ -2,10 +2,15 @@
 #include "p2p.h"
 
 ATransformSync2D::ATransformSync2D() {
+    IS_OWNER=true ;
     POSITION = true;
     ROTATION = false;
     SCALE = false;
-
+    transform_buffer = TypedArray<Dictionary>();
+    transform_buffer.resize(3);
+    last_index_buffer = PackedInt64Array();
+    last_index_buffer.resize(3);
+    
     is_only_lobby_owner = false;
 
     packet_index_pos = 0;
@@ -84,6 +89,7 @@ void ATransformSync2D::_ready() {
         //uint64_t steam_id = player->get_name().to_int();
         if (is_only_lobby_owner == false && (get_node<Node>(NodePath(object_player)))->get_name().to_int() != NETWORK_MANAGER->STEAM_ID)
         {
+            IS_OWNER = false;
             POSITION = false;
             ROTATION = false;
             SCALE = false;
@@ -93,6 +99,7 @@ void ATransformSync2D::_ready() {
         {
             if (STEAM_PTR->getLobbyOwner(NETWORK_MANAGER->LOBBY_ID) != NETWORK_MANAGER->STEAM_ID)
             {
+                IS_OWNER = false;
                 UtilityFunctions::print("ATransformSync2D: Is only lobby owner is true but Player node is not the owner of the lobby!");
                 POSITION = false;
                 ROTATION = false;
@@ -110,39 +117,60 @@ void ATransformSync2D::_physics_process(double delta) {
     if (Engine::get_singleton()->is_editor_hint()) {
         return;
     }
-    if (POSITION)
+    if (NETWORK_MANAGER->GAME_STARTED)
     {
-        elapsed_time_pos += delta;
-        while (elapsed_time_pos > interval_pos) {
-            elapsed_time_pos -= interval_pos;
-            sync_position(); // İşlemi burada çağır
+        if (IS_OWNER)
+        {
+            if (POSITION)
+            {
+                elapsed_time_pos += delta;
+                while (elapsed_time_pos > interval_pos) {
+                    elapsed_time_pos -= interval_pos;
+                    sync_position(); // İşlemi burada çağır
+                }
+            }
+            if (ROTATION)
+            {
+                elapsed_time_rot += delta;
+                if (elapsed_time_rot > interval_rot)
+                {    
+                    elapsed_time_rot -= interval_rot;
+                    sync_rotation();
+                }
+            }
+            if (SCALE)
+            {
+                elapsed_time_scale += delta;
+                if (elapsed_time_scale > interval_scale)
+                {    
+                    elapsed_time_scale -= interval_scale;
+                    sync_scale();
+                }
+            }
         }
-    }
-    if (ROTATION)
-    {
-        elapsed_time_rot += delta;
-        if (elapsed_time_rot > interval_rot)
-        {    
-            elapsed_time_rot -= interval_rot;
-            sync_rotation();
-        }
-    }
-    if (SCALE)
-    {
-        elapsed_time_scale += delta;
-        if (elapsed_time_scale > interval_scale)
-        {    
-            elapsed_time_scale -= interval_scale;
-            sync_scale();
-        }
-    }
+        else if(!IS_OWNER)
+        {
+            if (transform_buffer[0].operator!=(Variant::NIL))
+            {
+                uint64_t last_index = last_index_buffer[0];
+                uint64_t current_index = transform_buffer[0]["Idx"];
+                if (current_index>=last_index)
+                {
+                    Vector2 lerped_value = UtilityFunctions::lerp(Object::cast_to<Node2D>(get_parent())->get_global_position(), transform_buffer[0]["value"], 0.1f);
+                    Object::cast_to<Node2D>(get_parent())->set_global_position(lerped_value);
+                    transform_buffer[0] = transform_buffer[0]["Idx"];
+                }
 
+            }
+        }
+
+    }
     
 }
 
 void ATransformSync2D::sync_position(){
     
-    if (Object::cast_to<Node2D>(get_parent())->get_global_position() != last_pos && NETWORK_MANAGER->GAME_STARTED)
+    if (Object::cast_to<Node2D>(get_parent())->get_global_position() != last_pos)
     {
         Dictionary DATA = Dictionary();
         DATA["Idx"] = packet_index_pos +1;
