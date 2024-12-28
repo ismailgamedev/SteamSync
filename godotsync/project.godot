@@ -13,6 +13,7 @@ config_version=5
 config/name="SteamSync"
 run/main_scene="res://addons/steam-sync/lobby/lobby.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
+boot_splash/show_image=false
 config/icon="res://icon.svg"
 
 [autoload]

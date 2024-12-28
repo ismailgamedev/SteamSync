@@ -119,6 +119,7 @@ uint64_t ANetworkManager::get_steam_id() {
     return STEAM_ID;
 }
 
+
 void ANetworkManager::set_steam_id(uint64_t _steam_id) {
     STEAM_ID = _steam_id;
 }

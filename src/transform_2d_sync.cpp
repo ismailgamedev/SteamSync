@@ -1,5 +1,5 @@
 #include "transform_2d_sync.h"
-
+#include "p2p.h"
 
 ATransformSync2D::ATransformSync2D() {
     POSITION = true;
@@ -72,17 +72,17 @@ void ATransformSync2D::_ready() {
     }
     STEAM_PTR = Object::cast_to<Steam>(Engine::get_singleton()->get_singleton("Steam"));
     NETWORK_MANAGER = get_node<ANetworkManager>(NodePath("/root/NetworkManager"));
-
+    P2P = get_node<AP2P>(NodePath("/root/P2P"));
     if (NETWORK_MANAGER->GAME_STARTED == true)
     {
         interval_pos = 1 / call_per_sec_pos;
         interval_rot = 1 / call_per_sec_rot;
         interval_scale = 1 / call_per_sec_scale;
-        Node *player = get_node<Node>(NodePath(object_player));
-
-        UtilityFunctions::print("Object Player: ",player->get_name() );
-
-        if (player->get_name().to_int() != NETWORK_MANAGER->STEAM_ID)
+        //Node *player = );
+        UtilityFunctions::print("interval: ",interval_pos );
+        UtilityFunctions::print("Object Player: ",get_node<Node>(NodePath(object_player))->get_name() );
+        //uint64_t steam_id = player->get_name().to_int();
+        if (is_only_lobby_owner == false && (get_node<Node>(NodePath(object_player)))->get_name().to_int() != NETWORK_MANAGER->STEAM_ID)
         {
             POSITION = false;
             ROTATION = false;
@@ -113,10 +113,9 @@ void ATransformSync2D::_physics_process(double delta) {
     if (POSITION)
     {
         elapsed_time_pos += delta;
-        if (elapsed_time_pos > interval_pos)
-        {    
+        while (elapsed_time_pos > interval_pos) {
             elapsed_time_pos -= interval_pos;
-            sync_position();
+            sync_position(); // İşlemi burada çağır
         }
     }
     if (ROTATION)
@@ -142,7 +141,22 @@ void ATransformSync2D::_physics_process(double delta) {
 }
 
 void ATransformSync2D::sync_position(){
-    UtilityFunctions::print("sync_position");
+    
+    if (Object::cast_to<Node2D>(get_parent())->get_global_position() != last_pos && NETWORK_MANAGER->GAME_STARTED)
+    {
+        Dictionary DATA = Dictionary();
+        DATA["Idx"] = packet_index_pos +1;
+        DATA["player_id"] = NETWORK_MANAGER->STEAM_ID;
+        DATA["TYPE"] = ANetworkManager::SEND_TYPE::TRANFORM_SYNC;
+        DATA["value"] = Object::cast_to<Node2D>(get_parent())->get_global_position();
+        DATA["node_path"] = get_path();
+        DATA["property"] = "global_position";
+
+        P2P->_send_P2P_Packet(0,0,DATA,Steam::P2PSend::P2P_SEND_UNRELIABLE);
+        packet_index_pos = packet_index_pos +1;
+        last_pos = Object::cast_to<Node2D>(get_parent())->get_global_position();
+    }
+    
 }
 
 void ATransformSync2D::sync_rotation(){

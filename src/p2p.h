@@ -19,9 +19,10 @@
 #include "godotsteam.h"
 #include "NetworkManager.h"
 namespace godot {
+ 
 
+class ATransformSync2D;
 class ACommand;
-
 class AP2P : public Node
 {
     GDCLASS(AP2P, Node);

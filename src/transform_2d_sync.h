@@ -15,8 +15,12 @@
 #include "godotsteam.h"
 #include "godot_cpp/classes/engine.hpp"
 #include "godot_cpp/variant/string.hpp"
+#include "godot_cpp/classes/node2d.hpp"
+
 namespace godot
 {
+
+class AP2P;
 
 class ATransformSync2D : public Node
 {
@@ -33,6 +37,7 @@ public:
 
     ANetworkManager* NETWORK_MANAGER = nullptr;
     Steam* STEAM_PTR = nullptr;
+    AP2P* P2P = nullptr;
     bool is_only_lobby_owner;
     NodePath object_player;
 
@@ -50,8 +55,6 @@ public:
 
     TypedArray<Dictionary> transform_buffer;
     PackedInt64Array packet_index_buffer;
-
-  
     
     double call_per_sec_pos;
     double call_per_sec_rot;
