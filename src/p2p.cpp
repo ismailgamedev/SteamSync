@@ -110,8 +110,7 @@ bool AP2P::_send_P2P_Packet(int16_t channel,int64_t target,Dictionary packet_dat
 
 void AP2P::handle_start_packet(Dictionary READABLE) {
  
-    uint16_t type = READABLE["TYPE"];
-    if (type == ANetworkManager::READY)
+    if (check_type(READABLE) == ANetworkManager::READY)
     {
         for (int member_data = 0; member_data <NETWORK_MANAGER->MEMBERS_DATA.size(); member_data++)
         {
@@ -122,12 +121,10 @@ void AP2P::handle_start_packet(Dictionary READABLE) {
         }
     } 
 
-    
-
-    
-    
-    
-    
+}
+uint16_t AP2P::check_type(Dictionary READABLE) {
+    uint16_t type = READABLE["TYPE"];
+    return type;
 }
 
 void AP2P::handle_event_packets(Dictionary READABLE) {
@@ -137,6 +134,8 @@ void AP2P::handle_event_packets(Dictionary READABLE) {
             auto args = READABLE["args"];
             if (args.operator!=(Variant::NIL))
             {
+                UtilityFunctions::print("COMMAND ARGS: ",args);
+
                 COMMAND->callv(READABLE["method"],args);
             }
             else
