@@ -51,6 +51,7 @@ void AP2P::_read_All_P2P_Packets(int64_t read_count) {
 
 void AP2P::_read_P2P_Packet() {
     uint32_t packet_size = SteamPtr->getAvailableP2PPacketSize(0);
+    UtilityFunctions::print("PACKET SIZE: ",packet_size);
     if (packet_size > 0)
     {
         Dictionary this_packet = SteamPtr->readP2PPacket(packet_size, 0);
@@ -96,7 +97,6 @@ bool AP2P::_send_P2P_Packet(int16_t channel,int64_t target,Dictionary packet_dat
     PackedByteArray compressed_data = UtilityFunctions::var_to_bytes(packet_data).compress(FileAccess::COMPRESSION_GZIP);
 
     this_data.append_array(compressed_data);
-    UtilityFunctions::print("Packet: ",this_data);
     if (target == 0)
     {
         if (NETWORK_MANAGER->LOBBY_MEMBERS.size() > 1)
@@ -105,8 +105,15 @@ bool AP2P::_send_P2P_Packet(int16_t channel,int64_t target,Dictionary packet_dat
             {
                 if (member["steam_id"] != NETWORK_MANAGER->STEAM_ID)
                 {
-                    return SteamPtr->sendP2PPacket(member["steam_id"], this_data, send_type, channel);
-                    
+                    if (SteamPtr->sendP2PPacket(member["steam_id"], this_data, send_type, channel) == true)
+                    {
+                        UtilityFunctions::print("SENDING PACKET TO: ",member["steam_id"]);
+                        return SteamPtr->sendP2PPacket(member["steam_id"], this_data, send_type, channel);
+                    }
+                    else
+                    {
+                        UtilityFunctions::print("FAILED TO SEND PACKET TO: ",member["steam_id"]);
+                    }
                 }
             }
         }
