@@ -169,6 +169,7 @@ void AP2P::handle_property_packets(Dictionary READABLE) {
         
         if (READABLE["property"] == "global_position"){
             ATransformSync2D *transform_sync = get_node<ATransformSync2D>(READABLE["node_path"]);
+            //UtilityFunctions::print("READ GLOBAL_POSITION: ",READABLE["value"]);
             transform_sync->transform_buffer[0] = READABLE;
         }
     }

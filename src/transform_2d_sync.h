@@ -41,6 +41,9 @@ public:
     bool is_only_lobby_owner;
     NodePath object_player;
 
+    double interpolation_pos;
+    
+
     bool IS_OWNER;
     bool POSITION;
     bool ROTATION;
@@ -94,6 +97,10 @@ public:
 
     void _ready() override;
     void _physics_process(double delta) override;
+    void _process(double delta) override;
+
+    void set_interpolation_pos(double _interpolation_pos);
+    double get_interpolation_pos();
 };
 }
 #endif

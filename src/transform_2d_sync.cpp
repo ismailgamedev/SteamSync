@@ -11,6 +11,8 @@ ATransformSync2D::ATransformSync2D() {
     last_index_buffer = PackedInt64Array();
     last_index_buffer.resize(3);
     
+    interpolation_pos = 0.3;
+
     is_only_lobby_owner = false;
 
     packet_index_pos = 0;
@@ -56,9 +58,10 @@ void ATransformSync2D::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_call_per_sec_pos"), &ATransformSync2D::get_call_per_sec_pos);	
     ClassDB::bind_method(D_METHOD("get_call_per_sec_rot"), &ATransformSync2D::get_call_per_sec_rot);	
     ClassDB::bind_method(D_METHOD("get_call_per_sec_scale"), &ATransformSync2D::get_call_per_sec_scale);
+    ClassDB::bind_method(D_METHOD("set_interpolation_pos","_interpolation_pos"), &ATransformSync2D::set_interpolation_pos);
+    ClassDB::bind_method(D_METHOD("get_interpolation_rot"), &ATransformSync2D::get_interpolation_pos);
 
-
-
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "interpolation_pos"), "set_interpolation_pos", "get_interpolation_rot");
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "IS_ONLY_LOBBY_OWNER"), "set_is_only_lobby_owner", "get_is_only_lobby_owner");
     ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "OBJECT_PLAYER"), "set_object_player", "get_object_player");
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "IS_POSITION"), "set_is_position", "get_is_position");
@@ -84,8 +87,8 @@ void ATransformSync2D::_ready() {
         interval_rot = 1 / call_per_sec_rot;
         interval_scale = 1 / call_per_sec_scale;
         //Node *player = );
-        UtilityFunctions::print("interval: ",interval_pos );
-        UtilityFunctions::print("Object Player: ",get_node<Node>(NodePath(object_player))->get_name() );
+        // UtilityFunctions::print("interval: ",interval_pos );
+        // UtilityFunctions::print("Object Player: ",get_node<Node>(NodePath(object_player))->get_name() );
         //uint64_t steam_id = player->get_name().to_int();
         if (is_only_lobby_owner == false && (get_node<Node>(NodePath(object_player)))->get_name().to_int() != NETWORK_MANAGER->STEAM_ID)
         {
@@ -93,14 +96,12 @@ void ATransformSync2D::_ready() {
             POSITION = false;
             ROTATION = false;
             SCALE = false;
-            UtilityFunctions::print("ATransformSync2D: Player node is not the owner of the this object");
         } 
         else if (is_only_lobby_owner)
         {
             if (STEAM_PTR->getLobbyOwner(NETWORK_MANAGER->LOBBY_ID) != NETWORK_MANAGER->STEAM_ID)
             {
                 IS_OWNER = false;
-                UtilityFunctions::print("ATransformSync2D: Is only lobby owner is true but Player node is not the owner of the lobby!");
                 POSITION = false;
                 ROTATION = false;
                 SCALE = false;
@@ -123,6 +124,7 @@ void ATransformSync2D::_physics_process(double delta) {
         {
             if (POSITION)
             {
+                
                 elapsed_time_pos += delta;
                 while (elapsed_time_pos > interval_pos) {
                     elapsed_time_pos -= interval_pos;
@@ -148,25 +150,39 @@ void ATransformSync2D::_physics_process(double delta) {
                 }
             }
         }
-        else if(!IS_OWNER)
-        {
-            if (transform_buffer[0].operator!=(Variant::NIL))
-            {
-                uint64_t last_index = last_index_buffer[0];
-                uint64_t current_index = transform_buffer[0]["Idx"];
-                if (current_index>=last_index)
-                {
-                    Vector2 lerped_value = UtilityFunctions::lerp(Object::cast_to<Node2D>(get_parent())->get_global_position(), transform_buffer[0]["value"], 0.1f);
-                    Object::cast_to<Node2D>(get_parent())->set_global_position(lerped_value);
-                    transform_buffer[0] = transform_buffer[0]["Idx"];
-                }
 
-            }
-        }
 
     }
     
 }
+
+void ATransformSync2D::_process(double delta) {
+    if(!IS_OWNER && NETWORK_MANAGER->GAME_STARTED)
+    {
+        if (transform_buffer[0].operator!=(Variant::NIL))
+        {
+            uint64_t last_index = last_index_buffer[0];
+            uint64_t current_index = transform_buffer[0]["Idx"];
+            UtilityFunctions::print("last_index: ",last_index," current_index: ",current_index);
+            UtilityFunctions::print("Transform_Buffer: ",transform_buffer[0]);
+            if (current_index>=last_index)
+            {
+                    
+                   
+                //UtilityFunctions::print("lerp: ",lerped_value);
+                Vector2 value = transform_buffer[0].get("value");
+                Vector2 current_position = Object::cast_to<Node2D>(get_parent())->get_global_position();
+                UtilityFunctions::print("current_position: ",current_position," value: ",value);
+
+                Vector2 lerped_value = UtilityFunctions::lerp(current_position, value, interpolation_pos);
+                Object::cast_to<Node2D>(get_parent())->set_global_position(lerped_value);
+                last_index_buffer[0] = transform_buffer[0]["Idx"];
+            }
+
+        }
+    }
+}
+
 
 void ATransformSync2D::sync_position(){
     
@@ -191,9 +207,15 @@ void ATransformSync2D::sync_rotation(){
     UtilityFunctions::print("sync_rotation");
 }
 
-
 void ATransformSync2D::sync_scale(){  
     UtilityFunctions::print("sync_scale");
+}
+
+void ATransformSync2D::set_interpolation_pos(double _interpolation_pos) {
+    interpolation_pos = _interpolation_pos;
+}
+double ATransformSync2D::get_interpolation_pos() {
+    return interpolation_pos;
 }
 
 void ATransformSync2D::set_is_only_lobby_owner(bool _is_only_lobby_owner) {
