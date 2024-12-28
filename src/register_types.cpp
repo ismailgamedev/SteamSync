@@ -9,6 +9,7 @@
 #include "command.h"
 #include <godot_cpp/classes/engine.hpp>
 #include "p2p.h"
+#include "transform_2d_sync.h"
 using namespace godot;
 
 static Steam *SteamPtr;
@@ -23,7 +24,7 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 		GDREGISTER_CLASS(AP2P);
 		GDREGISTER_CLASS(ANetworkManager);
 		GDREGISTER_CLASS(ACommand);
-		
+		GDREGISTER_CLASS(ATransformSync2D);
 	}
 	
 

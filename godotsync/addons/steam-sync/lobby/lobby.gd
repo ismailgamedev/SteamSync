@@ -218,6 +218,7 @@ func _on_lobby_joined( lobby: int, permissions: int, locked: bool, response: int
 		make_p2p_handshake()
 		get_lobby_members()
 		change_lobby_ui(MENU_VISIBILITY.LOBBY_MENU)
+		P2P.send_P2P_Packet(0,0,{"TYPE:":ANetworkManager.SEND_TYPE.HANDSHAKE},Steam.P2P_SEND_RELIABLE)
 		if Steam.getLobbyOwner(NetworkManager.LOBBY_ID) == NetworkManager.STEAM_ID:
 			start_btn.visible = true
 		

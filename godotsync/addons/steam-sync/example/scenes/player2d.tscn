@@ -29,3 +29,6 @@ zoom = Vector2(6.075, 6.075)
 process_callback = 0
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true
+
+[node name="ATransformSync2D" type="ATransformSync2D" parent="."]
+OBJECT_PLAYER = NodePath("..")

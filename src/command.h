@@ -35,7 +35,7 @@ public:
     ACommand();
     ~ACommand();
 
-    void send(String method, Variant args);  
+    void send(String method, Array args);  
     void _ready() override;
 
     void set_loading_screen(Ref<PackedScene> loading_screen);

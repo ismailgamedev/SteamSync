@@ -3,4 +3,5 @@
 [ext_resource type="Script" path="res://addons/steam-sync/example/Network/p_2p.gd" id="1_wkr0h"]
 
 [node name="AP2P" type="AP2P"]
+steam_id_debug = 1279124843856
 script = ExtResource("1_wkr0h")

@@ -36,6 +36,10 @@ public:
     ANetworkManager* NETWORK_MANAGER = nullptr;
     const int PACKET_READ_LIMIT = 32;
     uint16_t check_type(Dictionary READABLE);
+    uint64_t STEAM_ID_DEBUG;
+
+    uint64_t get_steam_id_debug();
+    void set_steam_id_debug(uint64_t _steam_id_debug);
     void _read_All_P2P_Packets(int64_t read_count  = 0);
     void _read_P2P_Packet();
     bool _send_P2P_Packet(int16_t channel,int64_t target,Dictionary packet_data,Steam::P2PSend send_type);
