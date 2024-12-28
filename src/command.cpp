@@ -20,13 +20,22 @@ void ACommand::_ready() {
     P2P = get_node<AP2P>(NodePath("/root/P2P"));
 }
 void ACommand::send(String method, Variant args) {
-
+    
     Dictionary DATA = Dictionary();
     DATA["TYPE"] = NETWORK_MANAGER->COMMAND;
     DATA["player_id"] = NETWORK_MANAGER->STEAM_ID;
     DATA["method"] = method;    
     DATA["args"] = args;
-    P2P->_send_P2P_Packet(0,0,DATA,Steam::P2PSend::P2P_SEND_RELIABLE);
+    if (P2P->_send_P2P_Packet(0,0,DATA,Steam::P2PSend::P2P_SEND_RELIABLE) == true)
+    {
+        UtilityFunctions::print("COMMAND SEND MESSAGE: ",DATA);
+    }
+    else
+    {
+        UtilityFunctions::print("COMMAND FAILED TO SEND MESSAGE: ",DATA);
+    }
+    
+    
 
 }
 

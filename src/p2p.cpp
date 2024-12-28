@@ -65,7 +65,7 @@ void AP2P::_read_P2P_Packet() {
         
 
         
-
+        UtilityFunctions::print("READABLE: ",READABLE);
         if (READABLE.has("TYPE"))
         {
             handle_property_packets(READABLE);
@@ -78,13 +78,25 @@ void AP2P::_read_P2P_Packet() {
     }
 }
 
+/**
+ * Sends a P2P packet to the specified target or all lobby members if the target is zero.
+ *
+ * Compresses the packet data and sends it using the specified send type and channel.
+ *
+ * @param channel The channel on which the packet should be sent.
+ * @param target The Steam ID of the target user. If zero, the packet is sent to all lobby members except the sender.
+ * @param packet_data The data to be sent in the packet, encapsulated in a Dictionary.
+ * @param send_type The type of sending method to be used (e.g., unreliable, reliable).
+ * @return Returns true if the packet is successfully sent, otherwise false.
+ */
+
 bool AP2P::_send_P2P_Packet(int16_t channel,int64_t target,Dictionary packet_data,Steam::P2PSend send_type) {
 
     PackedByteArray this_data = PackedByteArray();
     PackedByteArray compressed_data = UtilityFunctions::var_to_bytes(packet_data).compress(FileAccess::COMPRESSION_GZIP);
 
     this_data.append_array(compressed_data);
-
+    UtilityFunctions::print("Packet: ",this_data);
     if (target == 0)
     {
         if (NETWORK_MANAGER->LOBBY_MEMBERS.size() > 1)
@@ -94,6 +106,7 @@ bool AP2P::_send_P2P_Packet(int16_t channel,int64_t target,Dictionary packet_dat
                 if (member["steam_id"] != NETWORK_MANAGER->STEAM_ID)
                 {
                     return SteamPtr->sendP2PPacket(member["steam_id"], this_data, send_type, channel);
+                    
                 }
             }
         }
