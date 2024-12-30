@@ -36,3 +36,13 @@ func _physics_process(delta: float) -> void:
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 
 		move_and_slide()
+
+func printergo(isim : String):
+	print(isim)
+	if IS_OWNER:
+		$AFuncSync.call_f("printergo",0,[isim])
+	
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey:
+		if event.keycode == KEY_F1 and event.pressed:
+			printergo("TESTO")

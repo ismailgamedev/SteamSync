@@ -11,8 +11,9 @@ ATransformSync2D::ATransformSync2D() {
     last_index_buffer = PackedInt64Array();
     last_index_buffer.resize(3);
     
-    interpolation_pos = 0.3;
-
+    interpolation_pos = 0.15;
+    interpolation_rot = 0.15;
+    interpolation_scale = 0.15;
     is_only_lobby_owner = false;
 
     packet_index_pos = 0;
@@ -23,18 +24,18 @@ ATransformSync2D::ATransformSync2D() {
     elapsed_time_rot = 0;
     elapsed_time_scale = 0;
 
-    call_per_sec_pos = 15;
+    call_per_sec_pos = 20;
     interval_pos = 1;
 
-    call_per_sec_rot = 15;
+    call_per_sec_rot = 10;
     interval_rot = 1;
 
-    call_per_sec_scale = 15;
+    call_per_sec_scale = 10;
     interval_scale = 1;
 
     last_pos = Vector2(0, 0);
     last_rot = 0;
-    last_scale = Vector2(0, 0);
+    last_scale = Vector2(1, 1);
 }
 
 ATransformSync2D::~ATransformSync2D() {
@@ -60,7 +61,11 @@ void ATransformSync2D::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_call_per_sec_scale"), &ATransformSync2D::get_call_per_sec_scale);
     ClassDB::bind_method(D_METHOD("set_interpolation_pos","_interpolation_pos"), &ATransformSync2D::set_interpolation_pos);
     ClassDB::bind_method(D_METHOD("get_interpolation_rot"), &ATransformSync2D::get_interpolation_pos);
-
+    ClassDB::bind_method(D_METHOD("set_interpolation_rot","_interpolation_ros"), &ATransformSync2D::set_interpolation_rot);
+    ClassDB::bind_method(D_METHOD("get_interpolation_scale"), &ATransformSync2D::get_interpolation_scale);
+    ClassDB::bind_method(D_METHOD("set_interpolation_scale","_interpolation_scale"), &ATransformSync2D::set_interpolation_scale);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "interpolation_scale"), "set_interpolation_scale", "get_interpolation_scale");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "interpolation_rot"), "set_interpolation_rot", "get_interpolation_rot");
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "interpolation_pos"), "set_interpolation_pos", "get_interpolation_rot");
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "IS_ONLY_LOBBY_OWNER"), "set_is_only_lobby_owner", "get_is_only_lobby_owner");
     ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "OBJECT_PLAYER"), "set_object_player", "get_object_player");
@@ -93,18 +98,14 @@ void ATransformSync2D::_ready() {
         if (is_only_lobby_owner == false && (get_node<Node>(NodePath(object_player)))->get_name().to_int() != NETWORK_MANAGER->STEAM_ID)
         {
             IS_OWNER = false;
-            POSITION = false;
-            ROTATION = false;
-            SCALE = false;
+
         } 
         else if (is_only_lobby_owner)
         {
             if (STEAM_PTR->getLobbyOwner(NETWORK_MANAGER->LOBBY_ID) != NETWORK_MANAGER->STEAM_ID)
             {
                 IS_OWNER = false;
-                POSITION = false;
-                ROTATION = false;
-                SCALE = false;
+
             }
             
         }
@@ -129,7 +130,7 @@ void ATransformSync2D::_process(double delta) {
                 elapsed_time_pos += delta;
                 while (elapsed_time_pos > interval_pos) {
                     elapsed_time_pos -= interval_pos;
-                    sync_position(); // İşlemi burada çağır
+                    last_pos = sync_transform(last_pos,&packet_index_pos,"global_position");
                 }
             }
             if (ROTATION)
@@ -138,7 +139,7 @@ void ATransformSync2D::_process(double delta) {
                 if (elapsed_time_rot > interval_rot)
                 {    
                     elapsed_time_rot -= interval_rot;
-                    sync_rotation();
+                    last_rot = sync_transform(last_rot,&packet_index_rot,"rotation");
                 }
             }
             if (SCALE)
@@ -147,32 +148,65 @@ void ATransformSync2D::_process(double delta) {
                 if (elapsed_time_scale > interval_scale)
                 {    
                     elapsed_time_scale -= interval_scale;
-                    sync_scale();
+                    last_scale = sync_transform(last_scale,&packet_index_scale,"scale");
                 }
             }
         }
         else if(!IS_OWNER)
         {
-            if (transform_buffer[0].operator!=(Variant::NIL))
+            if (POSITION)
             {
-                uint64_t last_index = last_index_buffer[0];
-                uint64_t current_index = transform_buffer[0]["Idx"];
-                // UtilityFunctions::print("last_index: ",last_index," current_index: ",current_index);
-                // UtilityFunctions::print("Transform_Buffer: ",transform_buffer[0]);
-                if (current_index>=last_index)
+                // POSITION
+                if (transform_buffer[0].operator!=(Variant::NIL))
                 {
+                    uint64_t last_index = last_index_buffer[0];
+                    uint64_t current_index = transform_buffer[0]["I"];
+                    if (current_index>=last_index)
+                    {
                         
-                    
-                    //UtilityFunctions::print("lerp: ",lerped_value);
-                    Vector2 value = transform_buffer[0].get("value");
-                    Vector2 current_position = Object::cast_to<Node2D>(get_parent())->get_global_position();
-                    // UtilityFunctions::print("current_position: ",current_position," value: ",value);
+                        Vector2 value = transform_buffer[0].get("V");
+                        Vector2 current_position = Object::cast_to<Node2D>(get_parent())->get_global_position();
+                        Vector2 lerped_value = UtilityFunctions::lerp(current_position, value, interpolation_pos);
+                        Object::cast_to<Node2D>(get_parent())->set_global_position(lerped_value);
+                        last_index_buffer[0] = transform_buffer[0]["I"];
+                    }
 
-                    Vector2 lerped_value = UtilityFunctions::lerp(current_position, value, interpolation_pos);
-                    Object::cast_to<Node2D>(get_parent())->set_global_position(lerped_value);
-                    last_index_buffer[0] = transform_buffer[0]["Idx"];
                 }
-
+            }
+            
+            if (ROTATION)
+            {
+                //ROTATION
+                if (transform_buffer[1].operator!=(Variant::NIL))
+                {
+                    uint64_t last_index = last_index_buffer[1];
+                    uint64_t current_index = transform_buffer[1]["I"];
+                    if (current_index>=last_index)
+                    {
+                        float value = transform_buffer[1].get("V");
+                        float current_rotation = Object::cast_to<Node2D>(get_parent())->get_rotation();
+                        float lerped_value = UtilityFunctions::lerp(current_rotation, value, interpolation_rot);
+                        Object::cast_to<Node2D>(get_parent())->set_rotation(lerped_value);
+                        last_index_buffer[1] = transform_buffer[1]["I"];
+                    }
+                }
+            }
+            if (SCALE)
+            {
+                //SCALE
+                if (transform_buffer[2].operator!=(Variant::NIL))
+                {
+                    uint64_t last_index = last_index_buffer[2];
+                    uint64_t current_index = transform_buffer[2]["I"];
+                    if (current_index>=last_index)
+                    {
+                        Vector2 value = transform_buffer[2].get("V");
+                        Vector2 current_scale = Object::cast_to<Node2D>(get_parent())->get_scale();
+                        Vector2 lerped_value = UtilityFunctions::lerp(current_scale, value, interpolation_scale);
+                        Object::cast_to<Node2D>(get_parent())->set_scale(lerped_value);
+                        last_index_buffer[2] = transform_buffer[2]["I"];
+                    }
+                }
             }
         }
     }
@@ -180,32 +214,31 @@ void ATransformSync2D::_process(double delta) {
 }
 
 
-void ATransformSync2D::sync_position(){
-    
-    if (Object::cast_to<Node2D>(get_parent())->get_global_position() != last_pos)
+Variant ATransformSync2D::sync_transform(Variant last_property,uint64_t* packet_index_property,const char* property_name){
+    Node2D* object = Object::cast_to<Node2D>(get_parent());
+    if (object->get(property_name) != last_property)
     {
         Dictionary DATA = Dictionary();
-        DATA["Idx"] = packet_index_pos +1;
-        DATA["player_id"] = NETWORK_MANAGER->STEAM_ID;
-        DATA["TYPE"] = ANetworkManager::SEND_TYPE::TRANFORM_SYNC;
-        DATA["value"] = Object::cast_to<Node2D>(get_parent())->get_global_position();
-        DATA["node_path"] = get_path();
-        DATA["property"] = "global_position";
-
+        //I: Index
+        DATA["I"] = *packet_index_property +1;
+        //PI: PlayerID
+        DATA["PI"] = NETWORK_MANAGER->STEAM_ID;
+        //T: TYPE
+        DATA["T"] = ANetworkManager::SEND_TYPE::TRANFORM_SYNC;
+        //V: Value
+        DATA["V"] = object->get(property_name);
+        //NP: NodePath
+        DATA["NP"] = get_path();
+        //VP: Property
+        DATA["P"] = property_name;
         P2P->_send_P2P_Packet(0,0,DATA,Steam::P2PSend::P2P_SEND_UNRELIABLE);
-        packet_index_pos = packet_index_pos +1;
-        last_pos = Object::cast_to<Node2D>(get_parent())->get_global_position();
+        *packet_index_property = *packet_index_property + 1;
+        last_property = object->get(property_name);
+        return last_property;
     }
-    
+    return last_property;
 }
 
-void ATransformSync2D::sync_rotation(){
-    UtilityFunctions::print("sync_rotation");
-}
-
-void ATransformSync2D::sync_scale(){  
-    UtilityFunctions::print("sync_scale");
-}
 
 void ATransformSync2D::set_interpolation_pos(double _interpolation_pos) {
     interpolation_pos = _interpolation_pos;
@@ -264,4 +297,18 @@ double ATransformSync2D::get_call_per_sec_rot() {
 }
 double ATransformSync2D::get_call_per_sec_scale() {
     return call_per_sec_scale;
+}
+
+void ATransformSync2D::set_interpolation_rot(double _interpolation_rot) {
+    interpolation_rot = _interpolation_rot;
+}
+void ATransformSync2D::set_interpolation_scale(double _interpolation_scale) {
+    interpolation_scale = _interpolation_scale;
+}
+
+double ATransformSync2D::get_interpolation_rot() {
+    return interpolation_rot;
+}
+double ATransformSync2D::get_interpolation_scale() {
+    return interpolation_scale;
 }

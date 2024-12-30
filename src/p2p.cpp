@@ -68,9 +68,10 @@ void AP2P::_read_P2P_Packet() {
         Dictionary READABLE = UtilityFunctions::bytes_to_var(packed_code.decompress_dynamic(-1,FileAccess::COMPRESSION_GZIP));
         
 
-        //UtilityFunctions::print("READABLE: ",READABLE);
-        if (READABLE.has("TYPE"))
+        
+        if (READABLE.has("T"))
         {
+            //UtilityFunctions::print("READABLE: ",READABLE);
             handle_property_packets(READABLE);
             handle_event_packets(READABLE);
             handle_start_packet(READABLE);
@@ -81,17 +82,6 @@ void AP2P::_read_P2P_Packet() {
     }
 }
 
-/**
- * Sends a P2P packet to the specified target or all lobby members if the target is zero.
- *
- * Compresses the packet data and sends it using the specified send type and channel.
- *
- * @param channel The channel on which the packet should be sent.
- * @param target The Steam ID of the target user. If zero, the packet is sent to all lobby members except the sender.
- * @param packet_data The data to be sent in the packet, encapsulated in a Dictionary.
- * @param send_type The type of sending method to be used (e.g., unreliable, reliable).
- * @return Returns true if the packet is successfully sent, otherwise false.
- */
 bool AP2P::_send_P2P_Packet(int16_t channel,int64_t target,Dictionary packet_data,Steam::P2PSend send_type) {
 
     PackedByteArray this_data = PackedByteArray();
@@ -133,7 +123,7 @@ void AP2P::handle_start_packet(Dictionary READABLE) {
         for (int member_data = 0; member_data <NETWORK_MANAGER->MEMBERS_DATA.size(); member_data++)
         {
                 Dictionary data = NETWORK_MANAGER->MEMBERS_DATA[member_data];
-                if (data["steam_id"] == READABLE["steam_id"]){
+                if (data["steam_id"] == READABLE["PI"]){
                     data["ready"] = READABLE["ready"];
                 }
         }
@@ -141,13 +131,13 @@ void AP2P::handle_start_packet(Dictionary READABLE) {
 
 }
 uint16_t AP2P::check_type(Dictionary READABLE) {
-    uint16_t type = READABLE["TYPE"];
+    uint16_t type = READABLE["T"];
     return type;
 }
 
 void AP2P::handle_event_packets(Dictionary READABLE) {
     if (check_type(READABLE) == ANetworkManager::COMMAND)
-        {
+    {
             auto args = READABLE["args"];
             if (args.operator!=(Variant::NIL))
             {
@@ -160,17 +150,37 @@ void AP2P::handle_event_packets(Dictionary READABLE) {
                 COMMAND->call(READABLE["method"]);
             }
 
+    }
+    else if (check_type(READABLE) == ANetworkManager::EVENT)
+    {
+        auto args = READABLE["args"];
+        if (args.operator!=(Variant::NIL))
+        {
+            get_node<Node>(READABLE["NP"])->callv(READABLE["method"],args);
         }
+        else
+        {
+            get_node<Node>(READABLE["NP"])->call(READABLE["method"]);
+        }
+    }
+    
         
 }
 void AP2P::handle_property_packets(Dictionary READABLE) {
     if (check_type(READABLE) == ANetworkManager::TRANFORM_SYNC && NETWORK_MANAGER->GAME_STARTED)
     {
         
-        if (READABLE["property"] == "global_position"){
-            ATransformSync2D *transform_sync = get_node<ATransformSync2D>(READABLE["node_path"]);
-            //UtilityFunctions::print("READ GLOBAL_POSITION: ",READABLE["value"]);
+        if (READABLE["P"] == "global_position"){
+            ATransformSync2D *transform_sync = get_node<ATransformSync2D>(READABLE["NP"]);
             transform_sync->transform_buffer[0] = READABLE;
+        }
+        else if (READABLE["P"] == "rotation"){
+            ATransformSync2D *transform_sync = get_node<ATransformSync2D>(READABLE["NP"]);
+            transform_sync->transform_buffer[1] = READABLE;
+        }
+        else if (READABLE["P"] == "scale"){
+            ATransformSync2D *transform_sync = get_node<ATransformSync2D>(READABLE["NP"]);
+            transform_sync->transform_buffer[2] = READABLE;
         }
     }
     

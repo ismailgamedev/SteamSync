@@ -16,7 +16,6 @@
 #include "godot_cpp/classes/engine.hpp"
 #include "godot_cpp/variant/string.hpp"
 #include "godot_cpp/classes/node2d.hpp"
-
 namespace godot
 {
 
@@ -42,7 +41,8 @@ public:
     NodePath object_player;
 
     double interpolation_pos;
-    
+    double interpolation_rot;
+    double interpolation_scale;
 
     bool IS_OWNER;
     bool POSITION;
@@ -91,15 +91,21 @@ public:
     void set_object_player(NodePath _object_player);
     NodePath get_object_player();
 
-    void sync_position();
-    void sync_rotation();
-    void sync_scale();
+    Variant sync_transform(Variant last_property,uint64_t* packet_index_property,const char* property_name);
 
     void _ready() override;
     void _process(double delta) override;
 
     void set_interpolation_pos(double _interpolation_pos);
     double get_interpolation_pos();
+
+    void set_interpolation_rot(double _interpolation_rot);
+    double get_interpolation_rot();
+
+    void set_interpolation_scale(double _interpolation_scale);
+    double get_interpolation_scale();
 };
+
+
 }
 #endif

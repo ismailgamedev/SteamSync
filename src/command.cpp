@@ -22,8 +22,8 @@ void ACommand::_ready() {
 void ACommand::send(String method, Array args) {
     
     Dictionary DATA = Dictionary();
-    DATA["TYPE"] = NETWORK_MANAGER->COMMAND;
-    DATA["steam_id"] = NETWORK_MANAGER->STEAM_ID;
+    DATA["T"] = NETWORK_MANAGER->COMMAND;
+    DATA["PI"] = NETWORK_MANAGER->STEAM_ID;
     DATA["method"] = method;    
     DATA["args"] = args;
     P2P->_send_P2P_Packet(0,0,DATA,Steam::P2PSend::P2P_SEND_RELIABLE);
