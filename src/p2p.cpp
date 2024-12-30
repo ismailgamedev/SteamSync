@@ -1,6 +1,8 @@
 #include "p2p.h"
 #include "command.h"
 #include "transform_2d_sync.h"
+#include "property_sync.h"
+
 static Steam *SteamPtr = nullptr; 
 
 
@@ -136,6 +138,8 @@ uint16_t AP2P::check_type(Dictionary READABLE) {
 }
 
 void AP2P::handle_event_packets(Dictionary READABLE) {
+
+    
     if (check_type(READABLE) == ANetworkManager::COMMAND)
     {
             auto args = READABLE["args"];
@@ -151,7 +155,7 @@ void AP2P::handle_event_packets(Dictionary READABLE) {
             }
 
     }
-    else if (check_type(READABLE) == ANetworkManager::EVENT)
+    else if (check_type(READABLE) == ANetworkManager::EVENT && NETWORK_MANAGER->GAME_STARTED)
     {
         auto args = READABLE["args"];
         if (args.operator!=(Variant::NIL))
@@ -167,8 +171,10 @@ void AP2P::handle_event_packets(Dictionary READABLE) {
         
 }
 void AP2P::handle_property_packets(Dictionary READABLE) {
-    if (check_type(READABLE) == ANetworkManager::TRANFORM_SYNC && NETWORK_MANAGER->GAME_STARTED)
+    if (NETWORK_MANAGER->GAME_STARTED)
     {
+        if (check_type(READABLE) == ANetworkManager::TRANFORM_SYNC )
+        {
         
         if (READABLE["P"] == "global_position"){
             ATransformSync2D *transform_sync = get_node<ATransformSync2D>(READABLE["NP"]);
@@ -182,7 +188,27 @@ void AP2P::handle_property_packets(Dictionary READABLE) {
             ATransformSync2D *transform_sync = get_node<ATransformSync2D>(READABLE["NP"]);
             transform_sync->transform_buffer[2] = READABLE;
         }
+        }
+        else if (check_type(READABLE) == ANetworkManager::PROPERTY)
+        {
+            if (!READABLE["ITP"])
+            {
+                get_node<Node>(READABLE["NP"])->set(READABLE["P"],READABLE["V"]);
+            }
+            else
+            {
+                Array DATA = Array();
+                DATA[0] = READABLE["P"];
+                DATA[1] = READABLE["V"];
+                get_node<APropertySync>(READABLE["NP"])->DATA = DATA;
+            }
+        }
+
+        
     }
+    
+
+    
     
 }
 void AP2P::handle_voice_packets(Dictionary READABLE) {

@@ -136,7 +136,7 @@ void ATransformSync2D::_process(double delta) {
             if (ROTATION)
             {
                 elapsed_time_rot += delta;
-                if (elapsed_time_rot > interval_rot)
+                while (elapsed_time_rot > interval_rot)
                 {    
                     elapsed_time_rot -= interval_rot;
                     last_rot = sync_transform(last_rot,&packet_index_rot,"rotation");
@@ -145,7 +145,7 @@ void ATransformSync2D::_process(double delta) {
             if (SCALE)
             {
                 elapsed_time_scale += delta;
-                if (elapsed_time_scale > interval_scale)
+                while (elapsed_time_scale > interval_scale)
                 {    
                     elapsed_time_scale -= interval_scale;
                     last_scale = sync_transform(last_scale,&packet_index_scale,"scale");

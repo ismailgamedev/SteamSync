@@ -13,7 +13,9 @@
 #include "godot_cpp/variant/variant.hpp"
 #include "godot_cpp/classes/object.hpp"
 #include "godot_cpp/classes/timer.hpp"
+#include "godot_cpp/classes/engine.hpp"
 #include "NetworkManager.h"
+#include "godotsteam.h"
 namespace godot
 {
 class AP2P;
@@ -24,17 +26,18 @@ class APropertySync : public Node
 protected:
     static void _bind_methods();
 private:
-    Timer timer = Timer();
-    Array DATA;
+    Timer* timer = nullptr;
+    
     Array property_type;
     NodePath path;
 public:
+    Array DATA;
     APropertySync();
     ~APropertySync();
 
     ANetworkManager* NETWORK_MANAGER = nullptr;
     AP2P* P2P = nullptr;
-
+    Steam* SteamPtr = nullptr;
     bool is_only_lobby_owner;
     bool is_interpolated;
     double interpolation_value;
@@ -45,7 +48,7 @@ public:
     void _process(double delta) override;
     void set_is_only_lobby_owner(bool _is_only_lobby_owner);
     bool get_is_only_lobby_owner();
-
+    void _on_timer_timeout();
     void set_object_player(NodePath _object_player);
     NodePath get_object_player();
 
