@@ -23,6 +23,7 @@ namespace godot {
 
 class ATransformSync2D;
 class ACommand;
+class APropertySync;
 class AP2P : public Node
 {
     GDCLASS(AP2P, Node);

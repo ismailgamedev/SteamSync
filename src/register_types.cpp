@@ -11,7 +11,7 @@
 #include "p2p.h"
 #include "transform_2d_sync.h"
 #include "func_sync.h"
-
+#include "property_sync.h"
 using namespace godot;
 
 static Steam *SteamPtr;
@@ -28,7 +28,7 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 		GDREGISTER_CLASS(ACommand);
 		GDREGISTER_CLASS(ATransformSync2D);
 		GDREGISTER_CLASS(AFuncSync);
-
+		GDREGISTER_CLASS(APropertySync);
 
 	}
 	

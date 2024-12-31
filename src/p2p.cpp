@@ -1,7 +1,7 @@
 #include "p2p.h"
 #include "command.h"
 #include "transform_2d_sync.h"
-
+#include "property_sync.h"
 static Steam *SteamPtr = nullptr; 
 
 
@@ -187,6 +187,19 @@ void AP2P::handle_property_packets(Dictionary READABLE) {
                 ATransformSync2D *transform_sync = get_node<ATransformSync2D>(READABLE["NP"]);
                 transform_sync->transform_buffer[2] = READABLE;
             }
+        }
+        else if (check_type(READABLE) == ANetworkManager::PROPERTY ){
+            if (READABLE["ITP"].operator==(false))
+            {
+                get_node<Node>(READABLE["NP"])->set(READABLE["P"],READABLE["V"]);
+            }
+            else{
+                
+                APropertySync *node = get_node<APropertySync>(READABLE["NP"]);
+                //get_node<APropertySync>(READABLE["NP"])->set_data(READABLE);
+                node->set_data(READABLE);
+            }
+            
         }
 
 

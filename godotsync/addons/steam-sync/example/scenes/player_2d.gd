@@ -8,10 +8,11 @@ var IS_OWNER : bool = false
 var test_property : int = 0
 
 var push_force = 10.0
+
 func make_owner():
-	
 	IS_OWNER = true
 	$Camera2D.enabled = true
+	
 func _physics_process(delta: float) -> void:
 	$Label.text = str(test_property)
 	if IS_OWNER:
@@ -49,6 +50,7 @@ func _physics_process(delta: float) -> void:
 		var c = get_slide_collision(i)
 		if c.get_collider() is RigidBody2D:
 			c.get_collider().apply_central_impulse(-c.get_normal() * push_force)
+			
 func printergo(isim : String):
 	print(isim)
 	if IS_OWNER:
