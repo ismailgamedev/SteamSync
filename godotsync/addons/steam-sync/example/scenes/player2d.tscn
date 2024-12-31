@@ -35,10 +35,6 @@ OBJECT_PLAYER = NodePath("..")
 
 [node name="AFuncSync" type="AFuncSync" parent="."]
 
-[node name="APropertySync" type="APropertySync" parent="."]
-PROPERTIES = PackedStringArray("test_property", "velocity")
-OBJECT_PLAYER = NodePath("..")
-
 [node name="Label" type="Label" parent="."]
 offset_left = -7.0
 offset_top = -24.0
