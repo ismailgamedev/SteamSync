@@ -67,7 +67,6 @@ void APropertySync::_ready()
     STEAM_PTR = Object::cast_to<Steam>(Engine::get_singleton()->get_singleton("Steam"));
 
     parent_node = Object::cast_to<Node>(get_parent());
-    UtilityFunctions::print("parent node: ", parent_node->get_name());
     if (is_only_lobby_owner == true && STEAM_PTR->getLobbyOwner(NETWORK_MANAGER->LOBBY_ID) == NETWORK_MANAGER->STEAM_ID)
     {
         IS_OWNER = true;
@@ -137,7 +136,6 @@ void APropertySync::_process(double delta)
             {
                 if (last_values[property] != parent_node->get(property_list[property]))
                 {
-                    UtilityFunctions::print("PROPERTY CHANGED: ",property_list[property]);
                     Dictionary DATA = Dictionary();
                     DATA["PI"] = NETWORK_MANAGER->STEAM_ID;
                     DATA["T"] = ANetworkManager::SEND_TYPE::PROPERTY;

@@ -1,10 +1,9 @@
-[gd_scene load_steps=11 format=4 uid="uid://p3l1rhtfkuye"]
+[gd_scene load_steps=10 format=4 uid="uid://p3l1rhtfkuye"]
 
 [ext_resource type="Script" path="res://addons/steam-sync/NetworkPlayerSpawner.gd" id="1_kml1p"]
 [ext_resource type="Texture2D" uid="uid://clu8y8jervq6o" path="res://addons/steam-sync/example/assets/2d/decorations.png" id="2_ejn0f"]
 [ext_resource type="Texture2D" uid="uid://ccr7ammouyjxk" path="res://addons/steam-sync/example/assets/2d/tileset.png" id="3_vbmub"]
 [ext_resource type="Texture2D" uid="uid://dxpob5q2sigbh" path="res://addons/steam-sync/example/assets/ball.png" id="4_5jidv"]
-[ext_resource type="Script" path="res://addons/steam-sync/example/levels/testBall.gd" id="4_ja4cr"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_eirat"]
 atlas = ExtResource("2_ejn0f")
@@ -444,7 +443,6 @@ tile_set = SubResource("TileSet_4xbi3")
 position = Vector2(197, -130)
 physics_material_override = SubResource("PhysicsMaterial_5m4w3")
 constant_torque = 0.62
-script = ExtResource("4_ja4cr")
 
 [node name="Sprite2D" type="Sprite2D" parent="RigidBody2D"]
 texture_filter = 1
@@ -454,7 +452,4 @@ texture = ExtResource("4_5jidv")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D"]
 shape = SubResource("CircleShape2D_c0a0t")
 
-[node name="APropertySync" type="APropertySync" parent="RigidBody2D"]
-property_list = PackedStringArray("global_position")
-is_interpolation_enabled = true
-is_only_lobby_owner = true
+[node name="ARigidBody2DSync" type="ARigidBody2DSync" parent="RigidBody2D"]

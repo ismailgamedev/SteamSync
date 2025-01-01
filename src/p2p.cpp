@@ -2,6 +2,7 @@
 #include "command.h"
 #include "transform_2d_sync.h"
 #include "property_sync.h"
+#include "rigidbody2d_sync.h"
 static Steam *SteamPtr = nullptr; 
 
 
@@ -200,6 +201,11 @@ void AP2P::handle_property_packets(Dictionary READABLE) {
                 node->set_data(READABLE);
             }
             
+        }
+        else if (check_type(READABLE) == ANetworkManager::RIGIDBODY_SYNC)
+        {
+            ARigidBody2DSync *rigidbody_sync = get_node<ARigidBody2DSync>(READABLE["NP"]);
+            rigidbody_sync->state_data = READABLE;
         }
 
 
