@@ -94,7 +94,7 @@ public:
     Variant sync_transform(Variant last_property,uint64_t* packet_index_property,const char* property_name);
 
     void _ready() override;
-    void _process(double delta) override;
+    void _physics_process(double delta) override;
 
     void set_interpolation_pos(double _interpolation_pos);
     double get_interpolation_pos();

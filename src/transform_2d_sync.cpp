@@ -116,7 +116,7 @@ void ATransformSync2D::_ready() {
 }
 
 
-void ATransformSync2D::_process(double delta) {
+void ATransformSync2D::_physics_process(double delta) {
     if (Engine::get_singleton()->is_editor_hint()) {
         return;
     }
