@@ -16,6 +16,7 @@
 #include "godot_cpp/classes/engine.hpp"
 #include "godot_cpp/variant/string.hpp"
 #include "godot_cpp/classes/node2d.hpp"
+#include "godot_cpp/classes/time.hpp"	
 namespace godot
 {
 
@@ -58,6 +59,8 @@ public:
     Vector2 last_scale;
 
     TypedArray<Dictionary> transform_buffer;
+    TypedArray<Dictionary> position_buffer;
+    
     PackedInt64Array last_index_buffer;
     
     double call_per_sec_pos;
@@ -91,10 +94,12 @@ public:
     void set_object_player(NodePath _object_player);
     NodePath get_object_player();
 
+    int get_current_unix_time_ms();
+
     Variant sync_transform(Variant last_property,uint64_t* packet_index_property,const char* property_name);
 
     void _ready() override;
-    void _physics_process(double delta) override;
+    void _process(double delta) override;
 
     void set_interpolation_pos(double _interpolation_pos);
     double get_interpolation_pos();

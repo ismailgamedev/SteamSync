@@ -10,7 +10,7 @@ ATransformSync2D::ATransformSync2D() {
     transform_buffer.resize(3);
     last_index_buffer = PackedInt64Array();
     last_index_buffer.resize(3);
-    
+    position_buffer = TypedArray<Dictionary>();
     interpolation_pos = 0.15;
     interpolation_rot = 0.15;
     interpolation_scale = 0.15;
@@ -116,7 +116,7 @@ void ATransformSync2D::_ready() {
 }
 
 
-void ATransformSync2D::_physics_process(double delta) {
+void ATransformSync2D::_process(double delta) {
     if (Engine::get_singleton()->is_editor_hint()) {
         return;
     }
@@ -223,6 +223,7 @@ Variant ATransformSync2D::sync_transform(Variant last_property,uint64_t* packet_
         DATA["I"] = *packet_index_property +1;
         //PI: PlayerID
         DATA["PI"] = NETWORK_MANAGER->STEAM_ID;
+        DATA["TS"] = get_current_unix_time_ms();
         //T: TYPE
         DATA["T"] = ANetworkManager::SEND_TYPE::TRANFORM_SYNC;
         //V: Value
@@ -246,7 +247,6 @@ void ATransformSync2D::set_interpolation_pos(double _interpolation_pos) {
 double ATransformSync2D::get_interpolation_pos() {
     return interpolation_pos;
 }
-
 void ATransformSync2D::set_is_only_lobby_owner(bool _is_only_lobby_owner) {
     is_only_lobby_owner = _is_only_lobby_owner;
 }
@@ -262,7 +262,6 @@ void ATransformSync2D::set_is_rotation(bool _is_rotation) {
 void ATransformSync2D::set_is_scale(bool _is_scale) {
     SCALE = _is_scale;
 }
-
 void ATransformSync2D::set_call_per_sec_pos(double _call_per_sec_pos) {
     call_per_sec_pos = _call_per_sec_pos;
 }
@@ -272,7 +271,6 @@ void ATransformSync2D::set_call_per_sec_rot(double _call_per_sec_rot) {
 void ATransformSync2D::set_call_per_sec_scale(double _call_per_sec_scale) {
     call_per_sec_scale = _call_per_sec_scale;
 }
-
 bool ATransformSync2D::get_is_only_lobby_owner() {
     return is_only_lobby_owner;
 }
@@ -288,7 +286,6 @@ bool ATransformSync2D::get_is_rotation() {
 bool ATransformSync2D::get_is_scale() {
     return SCALE;
 }
-
 double ATransformSync2D::get_call_per_sec_pos() {
     return call_per_sec_pos;
 }
@@ -298,17 +295,18 @@ double ATransformSync2D::get_call_per_sec_rot() {
 double ATransformSync2D::get_call_per_sec_scale() {
     return call_per_sec_scale;
 }
-
 void ATransformSync2D::set_interpolation_rot(double _interpolation_rot) {
     interpolation_rot = _interpolation_rot;
 }
 void ATransformSync2D::set_interpolation_scale(double _interpolation_scale) {
     interpolation_scale = _interpolation_scale;
 }
-
 double ATransformSync2D::get_interpolation_rot() {
     return interpolation_rot;
 }
-double ATransformSync2D::get_interpolation_scale() {
+double ATransformSync2D::get_interpolation_scale() {    
     return interpolation_scale;
+}
+int ATransformSync2D::get_current_unix_time_ms() {
+    return Time::get_singleton()->get_unix_time_from_system() * 1000;
 }

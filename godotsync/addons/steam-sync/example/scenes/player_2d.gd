@@ -5,11 +5,16 @@ extends CharacterBody2D
 const SPEED = 90.0
 const JUMP_VELOCITY = -180.0
 var IS_OWNER : bool = false
+
+
 var test_property : int = 0
 
 var push_force = 10.0
 
+var deneme : Array[String] = ["TEST","SA","SA"]
+
 func make_owner():
+	
 	IS_OWNER = true
 	$Camera2D.enabled = true
 	
